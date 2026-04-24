@@ -1,0 +1,424 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Elemental Dice Duel</title>
+    <link rel="icon" type="image/png" href="cover.png">
+    <style>
+        :root {
+            --bg-color: #0a0a0a;
+            --text-color: #e0e0e0;
+            --accent-gold: #f1c40f;
+            --accent-purple: #8e44ad;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-color);
+            background-image: url('cover.png');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            color: var(--text-color);
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        /* --- Loading Screen --- */
+        #loading-screen {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: #000 url('cover.png') no-repeat center center;
+            background-size: contain;
+            z-index: 9999;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-end;
+            align-items: center;
+            padding-bottom: 50px;
+        }
+        .loader {
+            width: 80%; max-width: 200px; height: 8px;
+            background: #333; border-radius: 5px; overflow: hidden; border: 1px solid #555;
+        }
+        .loader-fill {
+            width: 0%; height: 100%; background: var(--accent-gold);
+            box-shadow: 0 0 10px var(--accent-gold); transition: width 0.3s;
+        }
+
+        #game-container {
+            width: 95%;
+            max-width: 900px;
+            background: rgba(15, 15, 15, 0.94);
+            padding: 15px;
+            border-radius: 15px;
+            box-shadow: 0 0 40px rgba(0,0,0,1);
+            text-align: center;
+            backdrop-filter: blur(8px);
+            border: 1px solid #333;
+            margin: 10px;
+        }
+
+        .hidden { display: none !important; }
+
+        .menu-btn {
+            background: linear-gradient(to bottom, #444, #111);
+            color: white; border: 2px solid #555;
+            padding: 10px 18px; margin: 6px; cursor: pointer;
+            font-size: 1em; border-radius: 8px; transition: 0.3s;
+            min-width: 160px; font-weight: bold; text-transform: uppercase;
+        }
+        .menu-btn:hover { border-color: var(--accent-gold); color: var(--accent-gold); transform: scale(1.03); }
+
+        .music-ctrl {
+            background: rgba(0, 0, 0, 0.6);
+            border: 1px solid var(--accent-gold);
+            color: var(--accent-gold);
+            padding: 5px 12px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 0.8em;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            transition: 0.3s;
+            margin-bottom: 10px;
+        }
+
+        .arena { 
+            display: flex; flex-wrap: wrap; justify-content: space-around; 
+            margin-top: 5px; padding: 10px;
+            background-image: url('battle.png'); background-size: cover;
+            background-position: center; border-radius: 12px; border: 2px solid #444;
+            min-height: 300px;
+        }
+
+        .player-side { 
+            width: 38%; padding: 8px; background: rgba(0,0,0,0.7); 
+            border-radius: 10px; border: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .hp-bar { 
+            height: 50px; width: 100%; background-image: url('darah.png'); 
+            background-size: contain; background-repeat: no-repeat;
+            background-position: center; margin: 5px 0; position: relative; overflow: hidden;
+        }
+        .hp-fill { 
+            height: 100%; background: rgba(200, 0, 0, 0.45); width: 100%; 
+            transition: width 0.6s; float: right; mix-blend-mode: multiply;
+        }
+
+        .battle-img { width: 100%; max-height: 140px; object-fit: contain; filter: drop-shadow(0 0 8px black); }
+        .dice-box { font-size: 3.5em; color: var(--accent-gold); text-shadow: 0 0 15px rgba(241, 196, 15, 0.6); }
+
+        #log {
+            height: 60px; overflow-y: auto; background: rgba(0,0,0,0.85);
+            padding: 8px; text-align: left; font-size: 0.75em;
+            margin-top: 10px; border-radius: 8px; border: 1px solid #444; color: #ccc;
+        }
+
+        .modal {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.85); z-index: 10000;
+            display: flex; justify-content: center; align-items: center;
+        }
+        .modal-content {
+            background: #1a1a1a; padding: 15px; border-radius: 10px;
+            max-width: 85%; max-height: 85%; text-align: center;
+            border: 2px solid var(--accent-gold);
+        }
+        .modal-content img { max-width: 100%; max-height: 400px; border-radius: 5px; object-fit: contain; }
+
+        .char-card {
+            display: inline-block; width: 90px; padding: 8px; margin: 4px;
+            background: #1a1a1a; border: 2px solid #333; border-radius: 10px; cursor: pointer;
+            font-size: 0.8em;
+        }
+        .char-card.selected { border-color: var(--accent-gold); box-shadow: 0 0 10px var(--accent-gold); }
+        .monster-thumb { width: 100%; height: 70px; object-fit: cover; border-radius: 6px; }
+
+        @media (max-width: 600px) {
+            .player-side { width: 45%; }
+            .dice-section { order: 2; margin: 10px 0; }
+        }
+    </style>
+</head>
+<body>
+
+<div id="loading-screen">
+    <h2 style="color:white; text-shadow: 2px 2px 4px #000; font-size: 1.2em;">Loading...</h2>
+    <div class="loader"><div class="loader-fill" id="load-bar"></div></div>
+</div>
+
+<div id="rule-modal" class="modal hidden">
+    <div class="modal-content">
+        <h3 style="margin-top:0; color:var(--accent-gold);">RULEBOOK</h3>
+        <img src="rulebook.png" alt="Rulebook">
+        <br>
+        <button class="menu-btn" onclick="toggleRules()" style="min-width: 100px; margin-top:10px;">TUTUP</button>
+    </div>
+</div>
+
+<div id="game-container" class="hidden">
+    <div id="main-menu">
+        <img src="cover.png" alt="Logo" style="width: 120px; margin-bottom: 10px; border-radius: 8px;">
+        <h1 style="margin: 10px 0;">ELEMENTAL DICE DUEL</h1>
+        <button class="menu-btn" onclick="startSelection('pvp')">Multiplayer</button><br>
+        <button class="menu-btn" onclick="startSelection('pve')">VS AI</button><br>
+        <button class="menu-btn" onclick="toggleRules()" style="background: linear-gradient(to bottom, #555, #222);">Rulebook</button>
+    </div>
+
+    <div id="selection-screen" class="hidden">
+        <h2 id="selection-title" style="font-size: 1.2em;">Pilih Monster Pemain 1</h2>
+        <div id="monster-list" style="max-height: 250px; overflow-y: auto; margin-bottom: 10px;"></div>
+        <button class="menu-btn" onclick="confirmSelection()">Konfirmasi</button>
+    </div>
+
+    <div id="battle-screen" class="hidden">
+        <div style="display: flex; justify-content: flex-end;">
+            <button class="music-ctrl" onclick="toggleMusic()">
+                <span id="music-icon">▶️</span> <span id="music-text">Play Music</span>
+            </button>
+        </div>
+        <audio id="bg-music" loop>
+            <source src="
+            Soul Eater   OP 1 Resonance Full HD.mp3" type="audio/mpeg">
+        </audio>
+
+        <div class="arena">
+            <div class="player-side">
+                <h4 id="p1-name" style="margin: 5px 0;">P1</h4>
+                <div id="p1-monster-img-box"></div>
+                <div class="hp-bar"><div id="p1-hp-fill" class="hp-fill"></div></div>
+                <div id="p1-hp-text" style="font-size: 0.8em;">HP: 10/10</div>
+            </div>
+
+            <div class="dice-section" style="width: auto; order: 2;">
+                <div class="dice-box" id="dice-display">🎲</div>
+                <h5 id="turn-indicator" style="margin: 5px 0;">GILIRAN P1</h5>
+                <button class="menu-btn" id="roll-btn" onclick="handleRoll()" style="min-width: 80px; padding: 8px 15px;">ROLL!</button>
+            </div>
+
+            <div class="player-side">
+                <h4 id="p2-name" style="margin: 5px 0;">P2</h4>
+                <div id="p2-monster-img-box"></div>
+                <div class="hp-bar"><div id="p2-hp-fill" class="hp-fill"></div></div>
+                <div id="p2-hp-text" style="font-size: 0.8em;">HP: 10/10</div>
+            </div>
+        </div>
+        <div id="log"></div>
+    </div>
+</div>
+
+<script>
+    const bgMusic = document.getElementById('bg-music');
+    const musicIcon = document.getElementById('music-icon');
+    const musicText = document.getElementById('music-text');
+
+    function toggleMusic() {
+        if (bgMusic.paused) {
+            bgMusic.play().catch(e => console.log("Audio play blocked"));
+            musicIcon.innerText = "⏸️"; musicText.innerText = "Pause";
+        } else {
+            bgMusic.pause();
+            musicIcon.innerText = "▶️"; musicText.innerText = "Play";
+        }
+    }
+
+    window.onload = () => {
+        let progress = 0;
+        const loadBar = document.getElementById('load-bar');
+        const interval = setInterval(() => {
+            progress += Math.random() * 25;
+            if (progress > 100) progress = 100;
+            loadBar.style.width = progress + '%';
+            if(progress >= 100) {
+                clearInterval(interval);
+                setTimeout(() => {
+                    document.getElementById('loading-screen').classList.add('hidden');
+                    document.getElementById('game-container').classList.remove('hidden');
+                }, 400);
+            }
+        }, 120);
+    };
+
+    function toggleRules() { document.getElementById('rule-modal').classList.toggle('hidden'); }
+
+    // DATA MONSTER DENGAN ELEMEN & SKILL
+    const MONSTERS = [
+        { id: 'dorballom', name: 'Dorballom', element: 'dark', color: '#8e44ad', img: 'dorballom.png' },
+        { id: 'grist', name: 'Grist', element: 'nature', color: '#27ae60', img: 'grist.png' },
+        { id: 'bladewing', name: 'Bladewing', element: 'fire', color: '#c0392b', img: 'bladewing.png' },
+        { id: 'aesi', name: 'Aesi', element: 'water', color: '#2980b9', img: 'aesi.png' },
+        { id: 'alphadios', name: 'Alphadios', element: 'light', color: '#f1c40f', img: 'alphadios.png' }
+    ];
+
+    let gameState = { mode: '', step: 0, p1: null, p2: null, turn: 1, isRolling: false };
+
+    function startSelection(mode) {
+        gameState.mode = mode;
+        document.getElementById('main-menu').classList.add('hidden');
+        document.getElementById('selection-screen').classList.remove('hidden');
+        renderMonsters();
+    }
+
+    function renderMonsters() {
+        const list = document.getElementById('monster-list');
+        list.innerHTML = '';
+        MONSTERS.forEach(m => {
+            const card = document.createElement('div');
+            card.className = 'char-card';
+            card.onclick = () => {
+                document.querySelectorAll('.char-card').forEach(c => c.classList.remove('selected'));
+                card.classList.add('selected');
+                gameState.tempSelected = m;
+            };
+            card.innerHTML = `<img src="${m.img}" class="monster-thumb" onerror="this.src='https://via.placeholder.com/80'"><div>${m.name}</div>`;
+            list.appendChild(card);
+        });
+    }
+
+    function confirmSelection() {
+        if (!gameState.tempSelected) return alert("Pilih monster!");
+        if (gameState.step === 0) {
+            gameState.p1 = { ...gameState.tempSelected, hp: 10, maxHp: 10 };
+            if (gameState.mode === 'pvp') {
+                gameState.step = 1; gameState.tempSelected = null;
+                document.getElementById('selection-title').innerText = "Pilih Monster Pemain 2";
+                renderMonsters();
+            } else {
+                gameState.p2 = { ...MONSTERS[Math.floor(Math.random()*MONSTERS.length)], hp: 10, maxHp: 10 };
+                startBattle();
+            }
+        } else {
+            gameState.p2 = { ...gameState.tempSelected, hp: 10, maxHp: 10 };
+            startBattle();
+        }
+    }
+
+    function startBattle() {
+        document.getElementById('selection-screen').classList.add('hidden');
+        document.getElementById('battle-screen').classList.remove('hidden');
+        document.getElementById('p1-name').innerText = gameState.p1.name;
+        document.getElementById('p1-name').style.color = gameState.p1.color;
+        document.getElementById('p1-monster-img-box').innerHTML = `<img src="${gameState.p1.img}" class="battle-img">`;
+        document.getElementById('p2-name').innerText = gameState.p2.name;
+        document.getElementById('p2-name').style.color = gameState.p2.color;
+        document.getElementById('p2-monster-img-box').innerHTML = `<img src="${gameState.p2.img}" class="battle-img">`;
+        updateUI();
+    }
+
+    function handleRoll() {
+        if (gameState.isRolling) return;
+        gameState.isRolling = true;
+        const diceEl = document.getElementById('dice-display');
+        diceEl.innerText = "🎲";
+        setTimeout(() => {
+            const roll = Math.floor(Math.random() * 6) + 1;
+            diceEl.innerText = roll;
+            processTurn(roll);
+            gameState.isRolling = false;
+        }, 600);
+    }
+
+    function processTurn(roll) {
+        let attacker = gameState.turn === 1 ? gameState.p1 : gameState.p2;
+        let defender = gameState.turn === 1 ? gameState.p2 : gameState.p1;
+        
+        let skillMati = (defender.id === 'alphadios' && attacker.hp < defender.hp);
+
+        if (roll % 2 === 0) { // GENAP
+            let dmg = 2;
+            if (attacker.element === 'fire' && !skillMati) dmg = 3;
+            if (defender.element === 'light' && !skillMati) dmg = 1;
+            if (defender.id === 'grist') dmg -= 1;
+
+            defender.hp = Math.max(0, defender.hp - dmg);
+            addLog(`${attacker.name} Hit! -${dmg} HP`);
+
+            if (attacker.element === 'dark' && !skillMati) {
+                attacker.hp = Math.min(attacker.maxHp, attacker.hp + 1);
+                addLog(`Vampiric! ${attacker.name} pulih 1 HP`);
+            }
+            if (attacker.id === 'dorballom') {
+                defender.maxHp = Math.max(1, defender.maxHp - 1);
+                if(defender.hp > defender.maxHp) defender.hp = defender.maxHp;
+                addLog(`Cursed Aura: Max HP lawan terpangkas!`);
+            }
+        } else { // GANJIL
+            if (attacker.id === 'bladewing' && attacker.hp > 1) {
+                attacker.hp -= 1;
+                defender.hp = Math.max(0, defender.hp - 2);
+                addLog(`Overheat! ${attacker.name} paksa serangan (-1 HP Sendiri)`);
+            } else {
+                addLog(`${attacker.name} Miss.`);
+                if (attacker.element === 'water' && !skillMati) {
+                    attacker.hp = Math.min(attacker.maxHp, attacker.hp + 1);
+                    addLog(`Purify! Pulih 1 HP`);
+                }
+                if (defender.id === 'aesi') {
+                    attacker.hp = Math.max(0, attacker.hp - 1);
+                    addLog(`Reflective: ${attacker.name} terpental 1 damage!`);
+                }
+            }
+        }
+
+        updateUI();
+        if (gameState.p1.hp <= 0 || gameState.p2.hp <= 0) {
+            let win = gameState.p1.hp > 0 ? gameState.p1.name : gameState.p2.name;
+            setTimeout(() => { alert(`${win} MENANG!`); location.reload(); }, 300);
+        } else {
+            gameState.turn = gameState.turn === 1 ? 2 : 1;
+            startNewTurn();
+        }
+    }
+
+    function startNewTurn() {
+        let act = gameState.turn === 1 ? gameState.p1 : gameState.p2;
+        let tar = gameState.turn === 1 ? gameState.p2 : gameState.p1;
+        document.getElementById('turn-indicator').innerText = `GILIRAN ${act.name}`;
+
+        if (act.element === 'nature' && act.hp % 2 !== 0) {
+            if (act.id === 'grist') {
+                tar.hp = Math.max(0, tar.hp - 1);
+                addLog(`Thorn Burst: HP Ganjil, musuh kena 1 damage!`);
+            } else {
+                act.hp = Math.min(act.maxHp, act.hp + 1);
+                addLog(`Regrow: HP Ganjil, pulih 1 HP`);
+            }
+        }
+
+        updateUI();
+        if (tar.hp <= 0 || act.hp <= 0) {
+             let win = act.hp > 0 ? act.name : tar.name;
+             alert(`${win} MENANG!`); location.reload();
+             return;
+        }
+
+        if(gameState.mode === 'pve' && gameState.turn === 2) {
+            document.getElementById('roll-btn').classList.add('hidden');
+            setTimeout(handleRoll, 1000);
+        } else {
+            document.getElementById('roll-btn').classList.remove('hidden');
+        }
+    }
+
+    function updateUI() {
+        document.getElementById('p1-hp-fill').style.width = (gameState.p1.hp / 10 * 100) + "%";
+        document.getElementById('p2-hp-fill').style.width = (gameState.p2.hp / 10 * 100) + "%";
+        document.getElementById('p1-hp-text').innerText = `HP: ${gameState.p1.hp}/${gameState.p1.maxHp}`;
+        document.getElementById('p2-hp-text').innerText = `HP: ${gameState.p2.hp}/${gameState.p2.maxHp}`;
+    }
+
+    function addLog(msg) {
+        const log = document.getElementById('log');
+        log.innerHTML = `<div>> ${msg}</div>` + log.innerHTML;
+    }
+</script>
+</body>
+</html>
