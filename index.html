@@ -3,7 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Elemental Dice Duel </title>
+    <title>Elemental Dice Duel</title>
+    <link rel="icon" type="image/png" href="cover.png">
     <style>
         :root {
             --bg-color: #0a0a0a;
@@ -22,7 +23,6 @@
             background-attachment: fixed;
             color: var(--text-color);
             margin: 0;
-            /* FITUR BARU: Membuat konten di tengah layar */
             display: flex;
             justify-content: center;
             align-items: center;
@@ -63,7 +63,6 @@
             text-align: center;
             backdrop-filter: blur(8px);
             border: 1px solid #333;
-            /* Memastikan container tetap di tengah */
             margin: auto;
         }
 
@@ -214,7 +213,7 @@
             </button>
         </div>
         <audio id="bg-music" loop>
-            <source src="Soul Eater   OP 1 Resonance Full HD.mp3" type="audio/mpeg">
+            <source src="MADAMVデュエルマスターズビクトリーMyビクトリー.mp3" type="audio/mpeg">
         </audio>
 
         <div class="arena">
@@ -243,7 +242,6 @@
 </div>
 
 <script>
-    /* LOGIKA ASLI KAMU (TIDAK BERUBAH) */
     const bgMusic = document.getElementById('bg-music');
     const musicIcon = document.getElementById('music-icon');
     const musicText = document.getElementById('music-text');
@@ -278,6 +276,7 @@
     function toggleRules() { document.getElementById('rule-modal').classList.toggle('hidden'); }
 
     const MONSTERS = [
+        { id: 'ryusei', name: 'Ryusei', element: 'fire', color: '#ff4d4d', img: 'ryusei.png', skill: "Dragon's Scale: Jika terkena damage GENAP, serangan musuh di giliran berikutnya dipaksa meleset (Dadu dipaksa jadi 1)." },
         { id: 'dorballom', name: 'Dorballom', element: 'dark', color: '#8e44ad', img: 'dorballom.png', skill: ' Cursed Aura: Kurangi Max HP musuh.' },
         { id: 'grist', name: 'Grist', element: 'nature', color: '#27ae60', img: 'grist.png', skill: 'Thorn Burst: HP Ganjil beri 1 damage ke musuh. Tank: Kurangi 1 damage diterima.' },
         { id: 'bladewing', name: 'Bladewing', element: 'fire', color: '#c0392b', img: 'bladewing.png', skill: 'Overheat: Paksa serangan masuk (Ganjil jadi Hit) dengan bayar 1 HP sendiri.' },
@@ -289,7 +288,9 @@
         { id: 'nekusar', name: 'Nekusar', element: 'dark', color: '#8e44ad', img: 'nekusar.png', skill: 'Night Reborn: Bangkit kembali dengan 4 HP saat HP mencapai 0 (1x per game).', rebornUsed: false },
         { id: 'shiden', name: 'Shiden', element: 'fire', color: '#ff4500', img: 'shiden.png', skill: 'Burning Soul: Jika HP-mu 4 atau kurang, setiap serangan berhasil (Genap) memberikan +1 Damage tambahan.' },
         { id: 'quake', name: 'Quake', element: 'nature', color: '#556b2f', img: 'quake.png', skill: 'Overgrowth: Selama HP-mu Genap, serangan berhasil memberikan +1 Damage tambahan.' },
-        { id: 'emrakul', name: 'Emrakul', element: 'water', color: '#3498db', img: 'emrakul.png', skill: 'Abyssal Tide: Setiap kali pulih HP (Purify), serangan lawan berikutnya dikurangi -1 Damage.', abyssalShield: false }
+        { id: 'emrakul', name: 'Emrakul', element: 'water', color: '#3498db', img: 'emrakul.png', skill: 'Abyssal Tide: Setiap kali pulih HP (Purify), serangan lawan berikutnya dikurangi -1 Damage.', abyssalShield: false },
+        { id: 'zeron', name: 'Zeron', element: 'dark', color: '#8e44ad', img: 'zeron.png', skill: 'Soul Devourer: Jika HP lawan di bawah 5, serangan berhasil (Genap) memberi 3 Damage.' },
+        { id: 'ulalek', name: 'Ulalek', element: 'light', color: '#f1c40f', img: 'ulalek.png', skill: 'Gaze of the Void: Jika Genap, musuh Lumpuh (Skip 1 turn). Sekali pakai, aktif lagi jika terkena damage.' }
     ];
 
     let gameState = { mode: '', step: 0, p1: null, p2: null, turn: 1, isRolling: false, tempSelected: null };
@@ -333,7 +334,7 @@
     function confirmSelection() {
         if (!gameState.tempSelected) return alert("Pilih monster!");
         if (gameState.step === 0) {
-            gameState.p1 = { ...gameState.tempSelected, hp: 10, maxHp: 10, rebornUsed: false, abyssalShield: false };
+            gameState.p1 = { ...gameState.tempSelected, hp: 10, maxHp: 10, rebornUsed: false, abyssalShield: false, dragonScaleDebuff: false, skipTurn: false, skillActive: true };
             gameState.tempSelected = null;
             if (gameState.mode === 'pvp') {
                 gameState.step = 1;
@@ -341,11 +342,11 @@
                 renderMonsters();
             } else {
                 const available = MONSTERS.filter(m => m.id !== gameState.p1.id);
-                gameState.p2 = { ...available[Math.floor(Math.random()*available.length)], hp: 10, maxHp: 10, rebornUsed: false, abyssalShield: false };
+                gameState.p2 = { ...available[Math.floor(Math.random()*available.length)], hp: 10, maxHp: 10, rebornUsed: false, abyssalShield: false, dragonScaleDebuff: false, skipTurn: false, skillActive: true };
                 startBattle();
             }
         } else {
-            gameState.p2 = { ...gameState.tempSelected, hp: 10, maxHp: 10, rebornUsed: false, abyssalShield: false };
+            gameState.p2 = { ...gameState.tempSelected, hp: 10, maxHp: 10, rebornUsed: false, abyssalShield: false, dragonScaleDebuff: false, skipTurn: false, skillActive: true };
             startBattle();
         }
     }
@@ -373,6 +374,14 @@
             let attacker = gameState.turn === 1 ? gameState.p1 : gameState.p2;
             let defender = gameState.turn === 1 ? gameState.p2 : gameState.p1;
             let skillMati = (defender.id === 'alphadios' && attacker.hp < defender.hp);
+
+            if (attacker.dragonScaleDebuff && !skillMati) {
+                if (roll % 2 === 0) {
+                    roll = 1; 
+                    addLog(`Dragon's Scale: Dadu ${attacker.name} dipaksa jadi 1!`);
+                }
+                attacker.dragonScaleDebuff = false; 
+            }
 
             if (defender.id === 'bynor' && attacker.hp > defender.hp && roll % 2 === 0 && !skillMati) {
                 addLog(`High Pressure! ${defender.name} memaksa ${attacker.name} re-roll.`);
@@ -408,6 +417,11 @@
             let dmg = 2;
             if (attacker.element === 'fire' && !skillMati) dmg = 3;
             
+            if (attacker.id === 'zeron' && defender.hp < 5 && !skillMati) {
+                dmg = 3;
+                addLog(`Soul Devourer Aktif! Damage meningkat menjadi 3.`);
+            }
+
             if (attacker.id === 'shiden' && attacker.hp <= 4 && !skillMati) {
                 dmg += 1;
                 addLog(`Burning Soul Aktif! +1 Damage Tambahan.`);
@@ -427,8 +441,27 @@
                 defender.abyssalShield = false; 
             }
 
+            // Logic damage dealt
             defender.hp = Math.max(0, defender.hp - dmg);
             addLog(`${attacker.name} Hit! -${dmg} HP`);
+
+            // Re-charge Skill Ulalek jika defender yang kena damage adalah Ulalek
+            if (defender.id === 'ulalek' && !defender.skillActive && dmg > 0) {
+                defender.skillActive = true;
+                addLog(`${defender.name} terkena damage! Gaze of the Void aktif kembali.`);
+            }
+
+            // Skill Ulalek: Gaze of the Void
+            if (attacker.id === 'ulalek' && attacker.skillActive && !skillMati) {
+                defender.skipTurn = true;
+                attacker.skillActive = false;
+                addLog(`Gaze of the Void! ${defender.name} Lumpuh (Skip 1 giliran).`);
+            }
+
+            if (defender.id === 'ryusei' && !skillMati) {
+                attacker.dragonScaleDebuff = true;
+                addLog(`Dragon's Scale terpicu! ${attacker.name} dipaksa meleset di turn depan.`);
+            }
             
             if (attacker.id === 'alpharion' && !skillMati && defender.hp > 0) {
                 updateUI();
@@ -436,6 +469,13 @@
                 setTimeout(() => {
                     let secondRoll = Math.floor(Math.random() * 6) + 1;
                     document.getElementById('dice-display').innerText = secondRoll;
+
+                    if (attacker.dragonScaleDebuff && !skillMati && secondRoll % 2 === 0) {
+                        secondRoll = 1;
+                        addLog(`Dragon's Scale: Serangan kedua dipaksa meleset!`);
+                        attacker.dragonScaleDebuff = false;
+                    }
+
                     if (secondRoll % 2 === 0) {
                         let bonusDmg = 3; 
                         if (defender.id === 'grist') bonusDmg -= 1;
@@ -449,6 +489,15 @@
 
                         defender.hp = Math.max(0, defender.hp - bonusDmg);
                         addLog(`Genap lagi! Slash tambahan: -${bonusDmg} HP`);
+
+                        if (defender.id === 'ulalek' && !defender.skillActive && bonusDmg > 0) {
+                            defender.skillActive = true;
+                            addLog(`${defender.name} terkena damage! Gaze of the Void aktif kembali.`);
+                        }
+
+                        if (defender.id === 'ryusei' && !skillMati) {
+                            attacker.dragonScaleDebuff = true;
+                        }
                     } else {
                         addLog(`Lemparan kedua ganjil.`);
                     }
@@ -472,6 +521,10 @@
                 attacker.hp -= 1;
                 defender.hp = Math.max(0, defender.hp - 2);
                 addLog(`Overheat! ${attacker.name} paksa serangan (-1 HP Sendiri)`);
+                if (defender.id === 'ulalek' && !defender.skillActive) {
+                    defender.skillActive = true;
+                    addLog(`${defender.name} terkena damage! Gaze of the Void aktif kembali.`);
+                }
             } else {
                 addLog(`${attacker.name} Miss.`);
                 if (attacker.element === 'water' && !skillMati) {
@@ -486,6 +539,10 @@
                 if (defender.id === 'aesi' && !skillMati) {
                     attacker.hp = Math.max(0, attacker.hp - 1);
                     addLog(`Reflective: ${attacker.name} terpental 1 damage!`);
+                    if (attacker.id === 'ulalek' && !attacker.skillActive) {
+                        attacker.skillActive = true;
+                        addLog(`${attacker.name} terkena damage! Gaze of the Void aktif kembali.`);
+                    }
                 }
             }
         }
@@ -524,23 +581,34 @@
     function startNewTurn() {
         let act = gameState.turn === 1 ? gameState.p1 : gameState.p2;
         let tar = gameState.turn === 1 ? gameState.p2 : gameState.p1;
+
+        // Check Stun/Lumpuh Status
+        if (act.skipTurn) {
+            addLog(`${act.name} masih Lumpuh! Giliran dilewati.`);
+            act.skipTurn = false;
+            gameState.turn = gameState.turn === 1 ? 2 : 1;
+            startNewTurn();
+            return;
+        }
+
         document.getElementById('turn-indicator').innerText = `GILIRAN ${act.name}`;
         
         if (act.element === 'nature' && act.hp % 2 !== 0) {
             if (act.id === 'grist') {
                 tar.hp = Math.max(0, tar.hp - 1);
                 addLog(`Thorn Burst: HP Ganjil, musuh kena 1 damage!`);
-            } else if (act.id !== 'juranail' && act.id !== 'quake') {
+                if (tar.id === 'ulalek' && !tar.skillActive) {
+                    tar.skillActive = true;
+                    addLog(`${tar.name} terkena damage! Gaze of the Void aktif kembali.`);
+                }
+            } else {
                 act.hp = Math.min(act.maxHp, act.hp + 1);
-                addLog(`Regrow: HP Ganjil, pulih 1 HP`);
+                addLog(`Regrow: HP Ganjil, ${act.name} pulih 1 HP`);
             }
         }
         
         updateUI();
         
-        const p1Reborn = checkReborn(gameState.p1);
-        const p2Reborn = checkReborn(gameState.p2);
-
         if (gameState.p1.hp <= 0 || gameState.p2.hp <= 0) {
             let win = gameState.p1.hp > 0 ? gameState.p1.name : gameState.p2.name;
             alert(`${win} MENANG!`); location.reload();
