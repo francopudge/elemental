@@ -23,10 +23,11 @@
             color: var(--text-color);
             margin: 0;
             display: flex;
-            justify-content: center;
+            flex-direction: column;
             align-items: center;
             min-height: 100vh;
             overflow-x: hidden;
+            padding: 20px 0; 
         }
 
         #loading-screen {
@@ -60,7 +61,7 @@
             text-align: center;
             backdrop-filter: blur(8px);
             border: 1px solid #333;
-            margin: 10px;
+            margin: 20px auto;
         }
 
         .hidden { display: none !important; }
@@ -278,7 +279,7 @@
         { id: 'bynor', name: 'Bynor', element: 'water', color: '#3498db', img: 'bynor.png', skill: 'High Pressure: Selama HP lawan lebih tinggi, lawan wajib re-roll angka genap.' },
         { id: 'juranail', name: 'Juranail', element: 'nature', color: '#2ecc71', img: 'juranail.png', skill: 'Adaptive Roots: Jika HP lawan lebih tinggi, re-roll angka ganjil (1,3,5).' },
         { id: 'alpharion', name: 'Alpharion', element: 'light', color: '#fff176', img: 'alpharion.png', skill: 'Dual Wing Slash: Jika Genap, serang lagi. Jika Genap lagi, +1 Damage tambahan.' },
-        { id: 'nekusar', name: 'Nekusar', element: 'dark', color: '#e74c3c', img: 'nekusar.png', skill: 'Night Reborn: Bangkit kembali dengan 4 HP saat HP mencapai 0 (1x per game).', rebornUsed: false },
+        { id: 'nekusar', name: 'Nekusar', element: 'dark', color: '#8e44ad', img: 'nekusar.png', skill: 'Night Reborn: Bangkit kembali dengan 4 HP saat HP mencapai 0 (1x per game).', rebornUsed: false },
         { id: 'shiden', name: 'Shiden', element: 'fire', color: '#ff4500', img: 'shiden.png', skill: 'Burning Soul: Jika HP-mu 4 atau kurang, setiap serangan berhasil (Genap) memberikan +1 Damage tambahan.' },
         { id: 'quake', name: 'Quake', element: 'nature', color: '#556b2f', img: 'quake.png', skill: 'Overgrowth: Selama HP-mu Genap, serangan berhasil memberikan +1 Damage tambahan.' },
         { id: 'emrakul', name: 'Emrakul', element: 'water', color: '#3498db', img: 'emrakul.png', skill: 'Abyssal Tide: Setiap kali pulih HP (Purify), serangan lawan berikutnya dikurangi -1 Damage.', abyssalShield: false }
@@ -413,11 +414,10 @@
             if (defender.element === 'light' && !skillMati) dmg = 1;
             if (defender.id === 'grist') dmg -= 1;
             
-            // EMRAKUL ABYSSAL TIDE LOGIC
             if (defender.id === 'emrakul' && defender.abyssalShield && !skillMati) {
                 dmg = Math.max(0, dmg - 1);
                 addLog(`Abyssal Tide Aktif! Damage dikurangi.`);
-                defender.abyssalShield = false; // Reset shield after use
+                defender.abyssalShield = false; 
             }
 
             defender.hp = Math.max(0, defender.hp - dmg);
@@ -434,7 +434,6 @@
                         if (defender.id === 'grist') bonusDmg -= 1;
                         if (defender.element === 'light') bonusDmg = 1;
                         
-                        // Check shield again for second hit
                         if (defender.id === 'emrakul' && defender.abyssalShield && !skillMati) {
                             bonusDmg = Math.max(0, bonusDmg - 1);
                             addLog(`Abyssal Tide Aktif!`);
@@ -472,7 +471,6 @@
                     attacker.hp = Math.min(attacker.maxHp, attacker.hp + 1);
                     addLog(`Purify! Pulih 1 HP`);
                     
-                    // EMRAKUL TRIGGER SHIELD
                     if (attacker.id === 'emrakul') {
                         attacker.abyssalShield = true;
                         addLog(`Abyssal Tide Disiapkan!`);
