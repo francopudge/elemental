@@ -3,8 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Elemental Dice Duel</title>
-    <link rel="icon" type="image/png" href="cover.png">
+    <title>Elemental Dice Duel - Nekusar Edition</title>
     <style>
         :root {
             --bg-color: #0a0a0a;
@@ -30,7 +29,6 @@
             overflow-x: hidden;
         }
 
-        /* --- Loading Screen --- */
         #loading-screen {
             position: fixed;
             top: 0; left: 0; width: 100%; height: 100%;
@@ -145,33 +143,20 @@
         .char-card.selected { border-color: var(--accent-gold); box-shadow: 0 0 10px var(--accent-gold); }
         
         .char-card.disabled { 
-            opacity: 0.4; 
-            cursor: not-allowed; 
-            filter: grayscale(1);
-            pointer-events: none;
+            opacity: 0.4; cursor: not-allowed; filter: grayscale(1); pointer-events: none;
         }
         .char-card.disabled::after {
             content: "SUDAH DIPILIH";
-            position: absolute;
-            top: 50%; left: 50%;
+            position: absolute; top: 50%; left: 50%;
             transform: translate(-50%, -50%) rotate(-20deg);
-            background: rgba(255, 0, 0, 0.8);
-            color: white;
-            padding: 2px 5px;
-            font-weight: bold;
-            font-size: 0.8em;
-            border-radius: 4px;
+            background: rgba(255, 0, 0, 0.8); color: white;
+            padding: 2px 5px; font-weight: bold; font-size: 0.8em; border-radius: 4px;
         }
 
         .monster-thumb { width: 100%; height: 90px; object-fit: cover; border-radius: 6px; }
-        
         .skill-text {
-            display: block;
-            margin-top: 5px;
-            font-size: 0.7em;
-            color: #aaa;
-            line-height: 1.2;
-            font-style: italic;
+            display: block; margin-top: 5px; font-size: 0.7em;
+            color: #aaa; line-height: 1.2; font-style: italic;
         }
 
         @media (max-width: 600px) {
@@ -290,25 +275,25 @@
         { id: 'bladewing', name: 'Bladewing', element: 'fire', color: '#c0392b', img: 'bladewing.png', skill: 'Overheat: Paksa serangan masuk (Ganjil jadi Hit) dengan bayar 1 HP sendiri.' },
         { id: 'aesi', name: 'Aesi', element: 'water', color: '#2980b9', img: 'aesi.png', skill: 'Reflective: Pantulkan 1 damage jika musuh Miss.' },
         { id: 'alphadios', name: 'Alphadios', element: 'light', color: '#f1c40f', img: 'alphadios.png', skill: 'Holy Pressure: Matikan skill musuh jika HP musuh lebih rendah darinya.' },
-        { id: 'bynor', name: 'Bynor', element: 'water', color: '#3498db', img: 'bynor.png', skill: 'High Pressure: Selama HP lawan lebih tinggi, lawan wajib re-roll angka genap.' }
+        { id: 'bynor', name: 'Bynor', element: 'water', color: '#3498db', img: 'bynor.png', skill: 'High Pressure: Selama HP lawan lebih tinggi, lawan wajib re-roll angka genap.' },
+        { id: 'juranail', name: 'Juranail', element: 'nature', color: '#2ecc71', img: 'juranail.png', skill: 'Adaptive Roots: Jika HP lawan lebih tinggi, re-roll angka ganjil (1,3,5).' },
+        { id: 'alpharion', name: 'Alpharion', element: 'light', color: '#fff176', img: 'alpharion.png', skill: 'Dual Wing Slash: Jika Genap, serang lagi. Jika Genap lagi, +1 Damage tambahan.' },
+        { id: 'nekusar', name: 'Nekusar', element: 'dark', color: '#e74c3c', img: 'nekusar.png', skill: 'Night Reborn: Bangkit kembali dengan 4 HP saat HP mencapai 0 (1x per game).', rebornUsed: false },
+        { id: 'shiden', name: 'Shiden', element: 'fire', color: '#ff4500', img: 'shiden.png', skill: 'Burning Soul: Jika HP-mu 4 atau kurang, setiap serangan berhasil (Genap) memberikan +1 Damage tambahan.' },
+        { id: 'quake', name: 'Quake', element: 'nature', color: '#556b2f', img: 'quake.png', skill: 'Overgrowth: Selama HP-mu Genap, serangan berhasil memberikan +1 Damage tambahan.' },
+        { id: 'emrakul', name: 'Emrakul', element: 'water', color: '#3498db', img: 'emrakul.png', skill: 'Abyssal Tide: Setiap kali pulih HP (Purify), serangan lawan berikutnya dikurangi -1 Damage.', abyssalShield: false }
     ];
 
     let gameState = { mode: '', step: 0, p1: null, p2: null, turn: 1, isRolling: false, tempSelected: null };
 
     function backToLobby() {
-        gameState.step = 0;
-        gameState.p1 = null;
-        gameState.p2 = null;
-        gameState.tempSelected = null;
+        gameState.step = 0; gameState.p1 = null; gameState.p2 = null; gameState.tempSelected = null;
         document.getElementById('selection-screen').classList.add('hidden');
         document.getElementById('main-menu').classList.remove('hidden');
     }
 
     function startSelection(mode) {
-        gameState.mode = mode;
-        gameState.step = 0;
-        gameState.p1 = null;
-        gameState.p2 = null;
+        gameState.mode = mode; gameState.step = 0; gameState.p1 = null; gameState.p2 = null;
         document.getElementById('main-menu').classList.add('hidden');
         document.getElementById('selection-screen').classList.remove('hidden');
         document.getElementById('selection-title').innerText = "Pilih Monster Pemain 1";
@@ -340,7 +325,7 @@
     function confirmSelection() {
         if (!gameState.tempSelected) return alert("Pilih monster!");
         if (gameState.step === 0) {
-            gameState.p1 = { ...gameState.tempSelected, hp: 10, maxHp: 10 };
+            gameState.p1 = { ...gameState.tempSelected, hp: 10, maxHp: 10, rebornUsed: false, abyssalShield: false };
             gameState.tempSelected = null;
             if (gameState.mode === 'pvp') {
                 gameState.step = 1;
@@ -348,11 +333,11 @@
                 renderMonsters();
             } else {
                 const available = MONSTERS.filter(m => m.id !== gameState.p1.id);
-                gameState.p2 = { ...available[Math.floor(Math.random()*available.length)], hp: 10, maxHp: 10 };
+                gameState.p2 = { ...available[Math.floor(Math.random()*available.length)], hp: 10, maxHp: 10, rebornUsed: false, abyssalShield: false };
                 startBattle();
             }
         } else {
-            gameState.p2 = { ...gameState.tempSelected, hp: 10, maxHp: 10 };
+            gameState.p2 = { ...gameState.tempSelected, hp: 10, maxHp: 10, rebornUsed: false, abyssalShield: false };
             startBattle();
         }
     }
@@ -377,25 +362,31 @@
 
         setTimeout(() => {
             let roll = Math.floor(Math.random() * 6) + 1;
-            
             let attacker = gameState.turn === 1 ? gameState.p1 : gameState.p2;
             let defender = gameState.turn === 1 ? gameState.p2 : gameState.p1;
+            let skillMati = (defender.id === 'alphadios' && attacker.hp < defender.hp);
 
-            // LOGIKA PASIF BYNOR: Jika lawan HP-nya lebih tinggi dan dapet angka Genap (Hit)
-            if (defender.id === 'bynor' && attacker.hp > defender.hp && roll % 2 === 0) {
+            if (defender.id === 'bynor' && attacker.hp > defender.hp && roll % 2 === 0 && !skillMati) {
                 addLog(`High Pressure! ${defender.name} memaksa ${attacker.name} re-roll.`);
                 diceEl.innerText = "🔄";
-                
                 setTimeout(() => {
                     roll = Math.floor(Math.random() * 6) + 1;
                     diceEl.innerText = roll;
                     processTurn(roll);
-                    gameState.isRolling = false;
                 }, 600);
-            } else {
+            } 
+            else if (attacker.id === 'juranail' && defender.hp > attacker.hp && roll % 2 !== 0 && !skillMati) {
+                addLog(`Adaptive Roots! ${attacker.name} melakukan re-roll.`);
+                diceEl.innerText = "🔄";
+                setTimeout(() => {
+                    roll = Math.floor(Math.random() * 6) + 1;
+                    diceEl.innerText = roll;
+                    processTurn(roll);
+                }, 600);
+            }
+            else {
                 diceEl.innerText = roll;
                 processTurn(roll);
-                gameState.isRolling = false;
             }
         }, 600);
     }
@@ -408,16 +399,64 @@
         if (roll % 2 === 0) { 
             let dmg = 2;
             if (attacker.element === 'fire' && !skillMati) dmg = 3;
+            
+            if (attacker.id === 'shiden' && attacker.hp <= 4 && !skillMati) {
+                dmg += 1;
+                addLog(`Burning Soul Aktif! +1 Damage Tambahan.`);
+            }
+
+            if (attacker.id === 'quake' && attacker.hp % 2 === 0 && !skillMati) {
+                dmg += 1;
+                addLog(`Overgrowth Aktif! HP Genap beri +1 Damage.`);
+            }
+
             if (defender.element === 'light' && !skillMati) dmg = 1;
             if (defender.id === 'grist') dmg -= 1;
+            
+            // EMRAKUL ABYSSAL TIDE LOGIC
+            if (defender.id === 'emrakul' && defender.abyssalShield && !skillMati) {
+                dmg = Math.max(0, dmg - 1);
+                addLog(`Abyssal Tide Aktif! Damage dikurangi.`);
+                defender.abyssalShield = false; // Reset shield after use
+            }
+
             defender.hp = Math.max(0, defender.hp - dmg);
             addLog(`${attacker.name} Hit! -${dmg} HP`);
             
+            if (attacker.id === 'alpharion' && !skillMati && defender.hp > 0) {
+                updateUI();
+                addLog(`Dual Wing Slash! ${attacker.name} menyerang lagi...`);
+                setTimeout(() => {
+                    let secondRoll = Math.floor(Math.random() * 6) + 1;
+                    document.getElementById('dice-display').innerText = secondRoll;
+                    if (secondRoll % 2 === 0) {
+                        let bonusDmg = 3; 
+                        if (defender.id === 'grist') bonusDmg -= 1;
+                        if (defender.element === 'light') bonusDmg = 1;
+                        
+                        // Check shield again for second hit
+                        if (defender.id === 'emrakul' && defender.abyssalShield && !skillMati) {
+                            bonusDmg = Math.max(0, bonusDmg - 1);
+                            addLog(`Abyssal Tide Aktif!`);
+                            defender.abyssalShield = false;
+                        }
+
+                        defender.hp = Math.max(0, defender.hp - bonusDmg);
+                        addLog(`Genap lagi! Slash tambahan: -${bonusDmg} HP`);
+                    } else {
+                        addLog(`Lemparan kedua ganjil.`);
+                    }
+                    updateUI();
+                    finalizeTurn();
+                }, 800);
+                return; 
+            }
+
             if (attacker.element === 'dark' && !skillMati) {
                 attacker.hp = Math.min(attacker.maxHp, attacker.hp + 1);
                 addLog(`Vampiric! ${attacker.name} pulih 1 HP`);
             }
-            if (attacker.id === 'dorballom') {
+            if (attacker.id === 'dorballom' && !skillMati) {
                 defender.maxHp = Math.max(1, defender.maxHp - 1);
                 if(defender.hp > defender.maxHp) defender.hp = defender.maxHp;
                 addLog(`Cursed Aura: Max HP lawan terpangkas!`);
@@ -432,21 +471,49 @@
                 if (attacker.element === 'water' && !skillMati) {
                     attacker.hp = Math.min(attacker.maxHp, attacker.hp + 1);
                     addLog(`Purify! Pulih 1 HP`);
+                    
+                    // EMRAKUL TRIGGER SHIELD
+                    if (attacker.id === 'emrakul') {
+                        attacker.abyssalShield = true;
+                        addLog(`Abyssal Tide Disiapkan!`);
+                    }
                 }
-                if (defender.id === 'aesi') {
+                if (defender.id === 'aesi' && !skillMati) {
                     attacker.hp = Math.max(0, attacker.hp - 1);
                     addLog(`Reflective: ${attacker.name} terpental 1 damage!`);
                 }
             }
         }
         updateUI();
-        if (gameState.p1.hp <= 0 || gameState.p2.hp <= 0) {
-            let win = gameState.p1.hp > 0 ? gameState.p1.name : gameState.p2.name;
-            setTimeout(() => { alert(`${win} MENANG!`); location.reload(); }, 300);
-        } else {
-            gameState.turn = gameState.turn === 1 ? 2 : 1;
-            startNewTurn();
+        finalizeTurn();
+    }
+
+    function checkReborn(target) {
+        if (target.id === 'nekusar' && target.hp <= 0 && !target.rebornUsed) {
+            target.hp = 4;
+            target.rebornUsed = true;
+            addLog(`⚡ NIGHT REBORN! ${target.name} bangkit kembali dengan 4 HP!`);
+            updateUI();
+            return true;
         }
+        return false;
+    }
+
+    function finalizeTurn() {
+        const p1Reborn = checkReborn(gameState.p1);
+        const p2Reborn = checkReborn(gameState.p2);
+        const delay = (p1Reborn || p2Reborn) ? 500 : 0;
+
+        setTimeout(() => {
+            if (gameState.p1.hp <= 0 || gameState.p2.hp <= 0) {
+                let win = gameState.p1.hp > 0 ? gameState.p1.name : gameState.p2.name;
+                alert(`${win} MENANG!`); location.reload();
+            } else {
+                gameState.turn = gameState.turn === 1 ? 2 : 1;
+                gameState.isRolling = false;
+                startNewTurn();
+            }
+        }, delay);
     }
 
     function startNewTurn() {
@@ -458,17 +525,23 @@
             if (act.id === 'grist') {
                 tar.hp = Math.max(0, tar.hp - 1);
                 addLog(`Thorn Burst: HP Ganjil, musuh kena 1 damage!`);
-            } else {
+            } else if (act.id !== 'juranail' && act.id !== 'quake') {
                 act.hp = Math.min(act.maxHp, act.hp + 1);
                 addLog(`Regrow: HP Ganjil, pulih 1 HP`);
             }
         }
+        
         updateUI();
-        if (tar.hp <= 0 || act.hp <= 0) {
-             let win = act.hp > 0 ? act.name : tar.name;
-             alert(`${win} MENANG!`); location.reload();
-             return;
+        
+        const p1Reborn = checkReborn(gameState.p1);
+        const p2Reborn = checkReborn(gameState.p2);
+
+        if (gameState.p1.hp <= 0 || gameState.p2.hp <= 0) {
+            let win = gameState.p1.hp > 0 ? gameState.p1.name : gameState.p2.name;
+            alert(`${win} MENANG!`); location.reload();
+            return;
         }
+
         if(gameState.mode === 'pve' && gameState.turn === 2) {
             document.getElementById('roll-btn').classList.add('hidden');
             setTimeout(handleRoll, 1000);
