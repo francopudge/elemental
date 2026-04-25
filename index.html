@@ -290,7 +290,8 @@
         { id: 'quake', name: 'Quake', element: 'nature', color: '#556b2f', img: 'quake.png', skill: 'Overgrowth: Selama HP-mu Genap, serangan berhasil memberikan +1 Damage tambahan.' },
         { id: 'emrakul', name: 'Emrakul', element: 'water', color: '#3498db', img: 'emrakul.png', skill: 'Abyssal Tide: Setiap kali pulih HP (Purify), serangan lawan berikutnya dikurangi -1 Damage.', abyssalShield: false },
         { id: 'zeron', name: 'Zeron', element: 'dark', color: '#8e44ad', img: 'zeron.png', skill: 'Soul Devourer: Jika HP lawan di bawah 5, serangan berhasil (Genap) memberi 3 Damage.' },
-        { id: 'ulalek', name: 'Ulalek', element: 'light', color: '#f1c40f', img: 'ulalek.png', skill: 'Gaze of the Void: Jika Genap, musuh Lumpuh (Skip 1 turn). Sekali pakai, aktif lagi jika terkena damage.' }
+        { id: 'ulalek', name: 'Ulalek', element: 'light', color: '#f1c40f', img: 'ulalek.png', skill: 'Gaze of the Void: Jika Genap, musuh Lumpuh (Skip 1 turn). Sekali pakai, aktif lagi jika terkena damage.' },
+        { id: 'deathbell', name: 'Deathbell', element: 'nature', color: '#2ecc71', img: 'deathbell.png', skill: 'Thousand-Eye Insight: Giliran lawan, lawan harus menebak angka. Jika musuh dapat GANJIL atau salah tebak, Re-Roll otomatis dipicu!' }
     ];
 
     let gameState = { mode: '', step: 0, p1: null, p2: null, turn: 1, isRolling: false, tempSelected: null };
@@ -365,47 +366,83 @@
 
     function handleRoll() {
         if (gameState.isRolling) return;
+        
+        let attacker = gameState.turn === 1 ? gameState.p1 : gameState.p2;
+        let defender = gameState.turn === 1 ? gameState.p2 : gameState.p1;
+        let skillMati = (defender.id === 'alphadios' && attacker.hp < defender.hp);
+
+        // Logic Tebakan Deathbell
+        let userGuess = null;
+        if (defender.id === 'deathbell' && !skillMati) {
+            if (gameState.mode === 'pve' && gameState.turn === 2) {
+                userGuess = Math.random() < 0.5 ? "ganjil" : "genap";
+                addLog(`AI menebak: ${userGuess.toUpperCase()}`);
+            } else {
+                let input = prompt(`Thousand-Eye Insight! Tebak angka dadumu (Ganjil/Genap):`);
+                if (!input) input = "ganjil";
+                userGuess = input.toLowerCase();
+            }
+        }
+
         gameState.isRolling = true;
         const diceEl = document.getElementById('dice-display');
         diceEl.innerText = "🎲";
 
         setTimeout(() => {
             let roll = Math.floor(Math.random() * 6) + 1;
-            let attacker = gameState.turn === 1 ? gameState.p1 : gameState.p2;
-            let defender = gameState.turn === 1 ? gameState.p2 : gameState.p1;
-            let skillMati = (defender.id === 'alphadios' && attacker.hp < defender.hp);
+// Efek Deathbell (FINAL FIX)
+if (userGuess && !skillMati) {
+    let isEven = (roll % 2 === 0);
+    let guessedCorrect = (userGuess === "genap" && isEven) || (userGuess === "ganjil" && !isEven);
 
-            if (attacker.dragonScaleDebuff && !skillMati) {
-                if (roll % 2 === 0) {
-                    roll = 1; 
-                    addLog(`Dragon's Scale: Dadu ${attacker.name} dipaksa jadi 1!`);
-                }
-                attacker.dragonScaleDebuff = false; 
-            }
+    if (!guessedCorrect) {
+        addLog(`Thousand-Eye Insight: Tebakan SALAH! Serangan gagal total.`);
+        roll = 1; // miss
+    } else {
+        addLog(`Thousand-Eye Insight: Tebakan BENAR!`);
 
-            if (defender.id === 'bynor' && attacker.hp > defender.hp && roll % 2 === 0 && !skillMati) {
-                addLog(`High Pressure! ${defender.name} memaksa ${attacker.name} re-roll.`);
-                diceEl.innerText = "🔄";
-                setTimeout(() => {
-                    roll = Math.floor(Math.random() * 6) + 1;
-                    diceEl.innerText = roll;
-                    processTurn(roll);
-                }, 600);
-            } 
-            else if (attacker.id === 'juranail' && defender.hp > attacker.hp && roll % 2 !== 0 && !skillMati) {
-                addLog(`Adaptive Roots! ${attacker.name} melakukan re-roll.`);
-                diceEl.innerText = "🔄";
-                setTimeout(() => {
-                    roll = Math.floor(Math.random() * 6) + 1;
-                    diceEl.innerText = roll;
-                    processTurn(roll);
-                }, 600);
+        // 🔥 KUNCI: kalau tebak GANJIL & hasil GANJIL → tetap dianggap HIT
+        if (userGuess === "ganjil" && !isEven) {
+            addLog(`Insight: Serangan ganjil dipaksa menjadi HIT!`);
+            roll = 2; // paksa genap supaya masuk sistem HIT
+        }
+    }
+}
+            finalizeRollProcess(roll, attacker, defender, skillMati, diceEl);
+        }, 600);
+    }
+
+    function finalizeRollProcess(roll, attacker, defender, skillMati, diceEl) {
+        if (attacker.dragonScaleDebuff && !skillMati) {
+            if (roll % 2 === 0) {
+                roll = 1; 
+                addLog(`Dragon's Scale: Dadu ${attacker.name} dipaksa jadi 1!`);
             }
-            else {
+            attacker.dragonScaleDebuff = false; 
+        }
+
+        if (defender.id === 'bynor' && attacker.hp > defender.hp && roll % 2 === 0 && !skillMati) {
+            addLog(`High Pressure! ${defender.name} memaksa ${attacker.name} re-roll.`);
+            diceEl.innerText = "🔄";
+            setTimeout(() => {
+                roll = Math.floor(Math.random() * 6) + 1;
                 diceEl.innerText = roll;
                 processTurn(roll);
-            }
-        }, 600);
+            }, 600);
+        } 
+        else if (attacker.id === 'juranail' && defender.hp > attacker.hp && roll % 2 !== 0 && !skillMati) {
+            addLog(`Adaptive Roots! ${attacker.name} melakukan re-roll.`);
+            diceEl.innerText = "🔄";
+            setTimeout(() => {
+                roll = Math.floor(Math.random() * 6) + 1;
+                diceEl.innerText = roll;
+                processTurn(roll);
+            }, 600);
+        }
+        else {
+            diceEl.innerText = roll;
+            processTurn(roll);
+        }
     }
 
     function processTurn(roll) {
@@ -441,17 +478,14 @@
                 defender.abyssalShield = false; 
             }
 
-            // Logic damage dealt
             defender.hp = Math.max(0, defender.hp - dmg);
             addLog(`${attacker.name} Hit! -${dmg} HP`);
 
-            // Re-charge Skill Ulalek jika defender yang kena damage adalah Ulalek
             if (defender.id === 'ulalek' && !defender.skillActive && dmg > 0) {
                 defender.skillActive = true;
                 addLog(`${defender.name} terkena damage! Gaze of the Void aktif kembali.`);
             }
 
-            // Skill Ulalek: Gaze of the Void
             if (attacker.id === 'ulalek' && attacker.skillActive && !skillMati) {
                 defender.skipTurn = true;
                 attacker.skillActive = false;
@@ -582,7 +616,6 @@
         let act = gameState.turn === 1 ? gameState.p1 : gameState.p2;
         let tar = gameState.turn === 1 ? gameState.p2 : gameState.p1;
 
-        // Check Stun/Lumpuh Status
         if (act.skipTurn) {
             addLog(`${act.name} masih Lumpuh! Giliran dilewati.`);
             act.skipTurn = false;
