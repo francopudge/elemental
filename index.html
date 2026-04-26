@@ -276,7 +276,7 @@
     function toggleRules() { document.getElementById('rule-modal').classList.toggle('hidden'); }
 
     const MONSTERS = [
-        { id: 'ryusei', name: 'Ryusei', element: 'fire', color: '#ff4d4d', img: 'ryusei.png', skill: "Dragon's Scale: Jika terkena damage GENAP, serangan musuh di giliran berikutnya dipaksa meleset (Dadu dipaksa jadi 1)." },
+        { id: 'ryusei', name: 'Ryusei', element: 'fire', color: '#ff4d4d', img: 'ryusei.png', skill: "Dragon's Scale: Jika terkena damage GENAP, serangan musuh di giliran berikutnya dipaksa meleset." },
         { id: 'dorballom', name: 'Dorballom', element: 'dark', color: '#8e44ad', img: 'dorballom.png', skill: ' Cursed Aura: Kurangi Max HP musuh.' },
         { id: 'grist', name: 'Grist', element: 'nature', color: '#27ae60', img: 'grist.png', skill: 'Thorn Burst: HP Ganjil beri 1 damage ke musuh. Tank: Kurangi 1 damage diterima.' },
         { id: 'bladewing', name: 'Bladewing', element: 'fire', color: '#c0392b', img: 'bladewing.png', skill: 'Overheat: Paksa serangan masuk (Ganjil jadi Hit) dengan bayar 1 HP sendiri.' },
@@ -291,7 +291,7 @@
         { id: 'emrakul', name: 'Emrakul', element: 'water', color: '#3498db', img: 'emrakul.png', skill: 'Abyssal Tide: Setiap kali pulih HP (Purify), serangan lawan berikutnya dikurangi -1 Damage.', abyssalShield: false },
         { id: 'zeron', name: 'Zeron', element: 'dark', color: '#8e44ad', img: 'zeron.png', skill: 'Soul Devourer: Jika HP lawan di bawah 5, serangan berhasil (Genap) memberi 3 Damage.' },
         { id: 'ulalek', name: 'Ulalek', element: 'light', color: '#f1c40f', img: 'ulalek.png', skill: 'Gaze of the Void: Jika Genap, musuh Lumpuh (Skip 1 turn). Sekali pakai, aktif lagi jika terkena damage.' },
-        { id: 'deathbell', name: 'Deathbell', element: 'nature', color: '#2ecc71', img: 'deathbell.png', skill: 'Thousand-Eye Insight: Giliran lawan, lawan harus menebak angka. Jika musuh dapat GANJIL atau salah tebak, Re-Roll otomatis dipicu!' }
+        { id: 'deathbell', name: 'Deathbell', element: 'nature', color: '#2ecc71', img: 'deathbell.png', skill: 'Thousand-Eye Insight: Giliran lawan, lawan harus menebak angka. Jika musuh dapat GANJIL atau salah tebak, serangan miss' }
     ];
 
     let gameState = { mode: '', step: 0, p1: null, p2: null, turn: 1, isRolling: false, tempSelected: null };
