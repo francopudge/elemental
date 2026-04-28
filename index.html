@@ -45,11 +45,13 @@
             padding-bottom: 50px;
         }
         .loader {
-            width: 80%; max-width: 200px; height: 8px;
+            width: 80%;
+            max-width: 200px; height: 8px;
             background: #333; border-radius: 5px; overflow: hidden; border: 1px solid #555;
         }
         .loader-fill {
-            width: 0%; height: 100%; background: var(--accent-gold);
+            width: 0%;
+            height: 100%; background: var(--accent-gold);
             box-shadow: 0 0 10px var(--accent-gold); transition: width 0.3s;
         }
 
@@ -94,7 +96,8 @@
         }
 
         .arena { 
-            display: flex; flex-wrap: wrap; justify-content: space-around; 
+            display: flex;
+            flex-wrap: wrap; justify-content: space-around; 
             margin-top: 5px; padding: 10px;
             background-image: url('battle.png'); background-size: cover;
             background-position: center; border-radius: 12px; border: 2px solid #444;
@@ -102,17 +105,20 @@
         }
 
         .player-side { 
-            width: 38%; padding: 8px; background: rgba(0,0,0,0.7); 
+            width: 38%;
+            padding: 8px; background: rgba(0,0,0,0.7); 
             border-radius: 10px; border: 1px solid rgba(255,255,255,0.1);
         }
 
         .hp-bar { 
-            height: 50px; width: 100%; background-image: url('darah.png'); 
+            height: 50px;
+            width: 100%; background-image: url('darah.png'); 
             background-size: contain; background-repeat: no-repeat;
             background-position: center; margin: 5px 0; position: relative; overflow: hidden;
         }
         .hp-fill { 
-            height: 100%; background: rgba(200, 0, 0, 0.45); width: 100%; 
+            height: 100%;
+            background: rgba(200, 0, 0, 0.45); width: 100%; 
             transition: width 0.6s; float: right; mix-blend-mode: multiply;
         }
 
@@ -120,45 +126,53 @@
         .dice-box { font-size: 3.5em; color: var(--accent-gold); text-shadow: 0 0 15px rgba(241, 196, 15, 0.6); }
 
         #log {
-            height: 80px; overflow-y: auto; background: rgba(0,0,0,0.85);
+            height: 80px;
+            overflow-y: auto; background: rgba(0,0,0,0.85);
             padding: 8px; text-align: left; font-size: 0.8em;
             margin-top: 10px; border-radius: 8px; border: 1px solid #444; color: #ccc;
         }
 
         .modal {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
             background: rgba(0,0,0,0.85); z-index: 10000;
             display: flex; justify-content: center; align-items: center;
         }
         .modal-content {
-            background: #1a1a1a; padding: 15px; border-radius: 10px;
+            background: #1a1a1a;
+            padding: 15px; border-radius: 10px;
             max-width: 85%; max-height: 85%; text-align: center;
             border: 2px solid var(--accent-gold);
         }
         .modal-content img { max-width: 100%; max-height: 400px; border-radius: 5px; object-fit: contain; }
 
         .char-card {
-            display: inline-block; width: 130px; padding: 8px; margin: 6px;
+            display: inline-block;
+            width: 130px; padding: 8px; margin: 6px;
             background: #1a1a1a; border: 2px solid #333; border-radius: 10px; cursor: pointer;
-            font-size: 0.8em; vertical-align: top; transition: 0.2s;
+            font-size: 0.8em; vertical-align: top;
+            transition: 0.2s;
             position: relative;
         }
         .char-card.selected { border-color: var(--accent-gold); box-shadow: 0 0 10px var(--accent-gold); }
         
         .char-card.disabled { 
-            opacity: 0.4; cursor: not-allowed; filter: grayscale(1); pointer-events: none;
+            opacity: 0.4;
+            cursor: not-allowed; filter: grayscale(1); pointer-events: none;
         }
         .char-card.disabled::after {
             content: "SUDAH DIPILIH";
             position: absolute; top: 50%; left: 50%;
             transform: translate(-50%, -50%) rotate(-20deg);
             background: rgba(255, 0, 0, 0.8); color: white;
-            padding: 2px 5px; font-weight: bold; font-size: 0.8em; border-radius: 4px;
+            padding: 2px 5px;
+            font-weight: bold; font-size: 0.8em; border-radius: 4px;
         }
 
         .monster-thumb { width: 100%; height: 90px; object-fit: cover; border-radius: 6px; }
         .skill-text {
-            display: block; margin-top: 5px; font-size: 0.7em;
+            display: block;
+            margin-top: 5px; font-size: 0.7em;
             color: #aaa; line-height: 1.2; font-style: italic;
         }
 
@@ -292,19 +306,23 @@
         { id: 'emrakul', name: 'Emrakul', element: 'water', color: '#3498db', img: 'emrakul.png', skill: 'Abyssal Tide: Setiap kali pulih HP (Purify), serangan lawan berikutnya dikurangi -1 Damage.', abyssalShield: false },
         { id: 'zeron', name: 'Zeron', element: 'dark', color: '#8e44ad', img: 'zeron.png', skill: 'Soul Devourer: Jika HP lawan di bawah 5, serangan berhasil (Genap) memberi 3 Damage.' },
         { id: 'ulalek', name: 'Ulalek', element: 'light', color: '#f1c40f', img: 'ulalek.png', skill: 'Gaze of the Void: Jika Genap, musuh Lumpuh (Skip 1 turn). Sekali pakai, aktif lagi jika terkena damage.' },
-        { id: 'deathbell', name: 'Deathbell', element: 'nature', color: '#2ecc71', img: 'deathbell.png', skill: 'Thousand-Eye Insight: Giliran lawan, lawan harus menebak angka. Jika musuh dapat GANJIL atau salah tebak, serangan miss' }
+        { id: 'deathbell', name: 'Deathbell', element: 'nature', color: '#2ecc71', img: 'deathbell.png', skill: 'Thousand-Eye Insight: Giliran lawan, lawan harus menebak angka. Jika musuh dapat GANJIL atau salah tebak, serangan miss' },
+        { id: 'plague', name: 'Plague', element: 'dark', color: '#8e44ad', img: 'plague.png', skill: 'Pestilence: Setiap kali hasil dadumu Ganjil (Serangan Gagal), lawan tetap terkena 1 Damage' },
+        { id: 'septimus', name: 'Septimus', element: 'light', color: '#f1c40f', img: 'septimus.png', skill: 'Shield Barrier: Aktif saat musuh roll 2/4. Septimus roll balasan; jika lebih tinggi dari musuh, 0 Damage diterima.' }
     ];
 
     let gameState = { mode: '', step: 0, p1: null, p2: null, turn: 1, isRolling: false, tempSelected: null };
 
     function backToLobby() {
-        gameState.step = 0; gameState.p1 = null; gameState.p2 = null; gameState.tempSelected = null;
+        gameState.step = 0; gameState.p1 = null; gameState.p2 = null;
+        gameState.tempSelected = null;
         document.getElementById('selection-screen').classList.add('hidden');
         document.getElementById('main-menu').classList.remove('hidden');
     }
 
     function startSelection(mode) {
-        gameState.mode = mode; gameState.step = 0; gameState.p1 = null; gameState.p2 = null;
+        gameState.mode = mode;
+        gameState.step = 0; gameState.p1 = null; gameState.p2 = null;
         document.getElementById('main-menu').classList.add('hidden');
         document.getElementById('selection-screen').classList.remove('hidden');
         document.getElementById('selection-title').innerText = "Pilih Monster Pemain 1";
@@ -367,12 +385,10 @@
 
     function handleRoll() {
         if (gameState.isRolling) return;
-        
         let attacker = gameState.turn === 1 ? gameState.p1 : gameState.p2;
         let defender = gameState.turn === 1 ? gameState.p2 : gameState.p1;
         let skillMati = (defender.id === 'alphadios' && attacker.hp < defender.hp);
 
-        // Logic Tebakan Deathbell
         let userGuess = null;
         if (defender.id === 'deathbell' && !skillMati) {
             if (gameState.mode === 'pve' && gameState.turn === 2) {
@@ -391,24 +407,20 @@
 
         setTimeout(() => {
             let roll = Math.floor(Math.random() * 6) + 1;
-// Efek Deathbell (FINAL FIX)
-if (userGuess && !skillMati) {
-    let isEven = (roll % 2 === 0);
-    let guessedCorrect = (userGuess === "genap" && isEven) || (userGuess === "ganjil" && !isEven);
-
-    if (!guessedCorrect) {
-        addLog(`Thousand-Eye Insight: Tebakan SALAH! Serangan gagal total.`);
-        roll = 1; // miss
-    } else {
-        addLog(`Thousand-Eye Insight: Tebakan BENAR!`);
-
-        // 🔥 KUNCI: kalau tebak GANJIL & hasil GANJIL → tetap dianggap HIT
-        if (userGuess === "ganjil" && !isEven) {
-            addLog(`Insight: Serangan ganjil dipaksa menjadi HIT!`);
-            roll = 2; // paksa genap supaya masuk sistem HIT
-        }
-    }
-}
+            if (userGuess && !skillMati) {
+                let isEven = (roll % 2 === 0);
+                let guessedCorrect = (userGuess === "genap" && isEven) || (userGuess === "ganjil" && !isEven);
+                if (!guessedCorrect) {
+                    addLog(`Thousand-Eye Insight: Tebakan SALAH! Serangan gagal total.`);
+                    roll = 1;
+                } else {
+                    addLog(`Thousand-Eye Insight: Tebakan BENAR!`);
+                    if (userGuess === "ganjil" && !isEven) {
+                        addLog(`Insight: Serangan ganjil dipaksa menjadi HIT!`);
+                        roll = 2;
+                    }
+                }
+            }
             finalizeRollProcess(roll, attacker, defender, skillMati, diceEl);
         }, 600);
     }
@@ -416,10 +428,10 @@ if (userGuess && !skillMati) {
     function finalizeRollProcess(roll, attacker, defender, skillMati, diceEl) {
         if (attacker.dragonScaleDebuff && !skillMati) {
             if (roll % 2 === 0) {
-                roll = 1; 
+                roll = 1;
                 addLog(`Dragon's Scale: Dadu ${attacker.name} dipaksa jadi 1!`);
             }
-            attacker.dragonScaleDebuff = false; 
+            attacker.dragonScaleDebuff = false;
         }
 
         if (defender.id === 'bynor' && attacker.hp > defender.hp && roll % 2 === 0 && !skillMati) {
@@ -430,8 +442,7 @@ if (userGuess && !skillMati) {
                 diceEl.innerText = roll;
                 processTurn(roll);
             }, 600);
-        } 
-        else if (attacker.id === 'juranail' && defender.hp > attacker.hp && roll % 2 !== 0 && !skillMati) {
+        } else if (attacker.id === 'juranail' && defender.hp > attacker.hp && roll % 2 !== 0 && !skillMati) {
             addLog(`Adaptive Roots! ${attacker.name} melakukan re-roll.`);
             diceEl.innerText = "🔄";
             setTimeout(() => {
@@ -439,8 +450,7 @@ if (userGuess && !skillMati) {
                 diceEl.innerText = roll;
                 processTurn(roll);
             }, 600);
-        }
-        else {
+        } else {
             diceEl.innerText = roll;
             processTurn(roll);
         }
@@ -450,98 +460,98 @@ if (userGuess && !skillMati) {
         let attacker = gameState.turn === 1 ? gameState.p1 : gameState.p2;
         let defender = gameState.turn === 1 ? gameState.p2 : gameState.p1;
         let skillMati = (defender.id === 'alphadios' && attacker.hp < defender.hp);
-        
+
         if (roll % 2 === 0) { 
             let dmg = 2;
-            if (attacker.element === 'fire' && !skillMati) dmg = 3;
-            
+
+            // --- SKILL SEPTIMUS: SHIELD BARRIER ---
+            if (defender.id === 'septimus' && (roll === 2 || roll === 4) && !skillMati) {
+                let septimusRoll = Math.floor(Math.random() * 6) + 1;
+                addLog(`Shield Barrier! Septimus roll balasan: ${septimusRoll}`);
+                if (septimusRoll > roll) {
+                    dmg = 0;
+                    addLog(`Shield Barrier Aktif! ${defender.name} tidak terkena damage.`);
+                } else {
+                    addLog(`Shield Barrier Gagal! Tetap terkena damage.`);
+                }
+            }
+
+            if (attacker.element === 'fire' && !skillMati && dmg > 0) dmg = 3;
             if (attacker.id === 'zeron' && defender.hp < 5 && !skillMati) {
                 dmg = 3;
                 addLog(`Soul Devourer Aktif! Damage meningkat menjadi 3.`);
             }
-
             if (attacker.id === 'shiden' && attacker.hp <= 4 && !skillMati) {
                 dmg += 1;
                 addLog(`Burning Soul Aktif! +1 Damage Tambahan.`);
             }
-
             if (attacker.id === 'quake' && attacker.hp % 2 === 0 && !skillMati) {
                 dmg += 1;
                 addLog(`Overgrowth Aktif! HP Genap beri +1 Damage.`);
             }
-
-            if (defender.element === 'light' && !skillMati) dmg = 1;
+            if (defender.element === 'light' && !skillMati && dmg > 0) dmg = 1;
             if (defender.id === 'grist') dmg -= 1;
-            
             if (defender.id === 'emrakul' && defender.abyssalShield && !skillMati) {
                 dmg = Math.max(0, dmg - 1);
                 addLog(`Abyssal Tide Aktif! Damage dikurangi.`);
                 defender.abyssalShield = false; 
             }
-
             defender.hp = Math.max(0, defender.hp - dmg);
-            addLog(`${attacker.name} Hit! -${dmg} HP`);
+            if (dmg > 0) addLog(`${attacker.name} Hit! -${dmg} HP`);
 
             if (defender.id === 'ulalek' && !defender.skillActive && dmg > 0) {
                 defender.skillActive = true;
                 addLog(`${defender.name} terkena damage! Gaze of the Void aktif kembali.`);
             }
-
             if (attacker.id === 'ulalek' && attacker.skillActive && !skillMati) {
                 defender.skipTurn = true;
                 attacker.skillActive = false;
                 addLog(`Gaze of the Void! ${defender.name} Lumpuh (Skip 1 giliran).`);
             }
-
-            if (defender.id === 'ryusei' && !skillMati) {
+            if (defender.id === 'ryusei' && !skillMati && dmg > 0) {
                 attacker.dragonScaleDebuff = true;
                 addLog(`Dragon's Scale terpicu! ${attacker.name} dipaksa meleset di turn depan.`);
             }
-            
             if (attacker.id === 'alpharion' && !skillMati && defender.hp > 0) {
                 updateUI();
                 addLog(`Dual Wing Slash! ${attacker.name} menyerang lagi...`);
                 setTimeout(() => {
                     let secondRoll = Math.floor(Math.random() * 6) + 1;
                     document.getElementById('dice-display').innerText = secondRoll;
-
                     if (attacker.dragonScaleDebuff && !skillMati && secondRoll % 2 === 0) {
                         secondRoll = 1;
                         addLog(`Dragon's Scale: Serangan kedua dipaksa meleset!`);
                         attacker.dragonScaleDebuff = false;
                     }
-
+            
                     if (secondRoll % 2 === 0) {
                         let bonusDmg = 3; 
                         if (defender.id === 'grist') bonusDmg -= 1;
                         if (defender.element === 'light') bonusDmg = 1;
-                        
                         if (defender.id === 'emrakul' && defender.abyssalShield && !skillMati) {
                             bonusDmg = Math.max(0, bonusDmg - 1);
                             addLog(`Abyssal Tide Aktif!`);
                             defender.abyssalShield = false;
                         }
-
                         defender.hp = Math.max(0, defender.hp - bonusDmg);
                         addLog(`Genap lagi! Slash tambahan: -${bonusDmg} HP`);
-
                         if (defender.id === 'ulalek' && !defender.skillActive && bonusDmg > 0) {
                             defender.skillActive = true;
                             addLog(`${defender.name} terkena damage! Gaze of the Void aktif kembali.`);
                         }
-
-                        if (defender.id === 'ryusei' && !skillMati) {
-                            attacker.dragonScaleDebuff = true;
-                        }
+                        if (defender.id === 'ryusei' && !skillMati) attacker.dragonScaleDebuff = true;
                     } else {
                         addLog(`Lemparan kedua ganjil.`);
+                        if (attacker.id === 'plague' && !skillMati) {
+                            defender.hp = Math.max(0, defender.hp - 1);
+                            addLog(`Pestilence: -1 Damage (Dadu Ganjil)`);
+                        }
                     }
                     updateUI();
                     finalizeTurn();
                 }, 800);
                 return; 
             }
-
             if (attacker.element === 'dark' && !skillMati) {
                 attacker.hp = Math.min(attacker.maxHp, attacker.hp + 1);
                 addLog(`Vampiric! ${attacker.name} pulih 1 HP`);
@@ -562,10 +572,18 @@ if (userGuess && !skillMati) {
                 }
             } else {
                 addLog(`${attacker.name} Miss.`);
+                if (attacker.id === 'plague' && !skillMati) {
+                    defender.hp = Math.max(0, defender.hp - 1);
+                    addLog(`Pestilence: Walaupun Miss, ${defender.name} tetap terkena 1 damage!`);
+                    if (defender.id === 'ulalek' && !defender.skillActive) {
+                        defender.skillActive = true;
+                        addLog(`${defender.name} terkena damage! Gaze of the Void aktif kembali.`);
+                    }
+                }
+
                 if (attacker.element === 'water' && !skillMati) {
                     attacker.hp = Math.min(attacker.maxHp, attacker.hp + 1);
                     addLog(`Purify! Pulih 1 HP`);
-                    
                     if (attacker.id === 'emrakul') {
                         attacker.abyssalShield = true;
                         addLog(`Abyssal Tide Disiapkan!`);
@@ -600,7 +618,6 @@ if (userGuess && !skillMati) {
         const p1Reborn = checkReborn(gameState.p1);
         const p2Reborn = checkReborn(gameState.p2);
         const delay = (p1Reborn || p2Reborn) ? 500 : 0;
-
         setTimeout(() => {
             if (gameState.p1.hp <= 0 || gameState.p2.hp <= 0) {
                 let win = gameState.p1.hp > 0 ? gameState.p1.name : gameState.p2.name;
@@ -616,7 +633,6 @@ if (userGuess && !skillMati) {
     function startNewTurn() {
         let act = gameState.turn === 1 ? gameState.p1 : gameState.p2;
         let tar = gameState.turn === 1 ? gameState.p2 : gameState.p1;
-
         if (act.skipTurn) {
             addLog(`${act.name} masih Lumpuh! Giliran dilewati.`);
             act.skipTurn = false;
@@ -626,7 +642,6 @@ if (userGuess && !skillMati) {
         }
 
         document.getElementById('turn-indicator').innerText = `GILIRAN ${act.name}`;
-        
         if (act.element === 'nature' && act.hp % 2 !== 0) {
             if (act.id === 'grist') {
                 tar.hp = Math.max(0, tar.hp - 1);
@@ -642,7 +657,6 @@ if (userGuess && !skillMati) {
         }
         
         updateUI();
-        
         if (gameState.p1.hp <= 0 || gameState.p2.hp <= 0) {
             let win = gameState.p1.hp > 0 ? gameState.p1.name : gameState.p2.name;
             alert(`${win} MENANG!`); location.reload();
@@ -658,10 +672,8 @@ if (userGuess && !skillMati) {
     }
 
     function updateUI() {
-        // Logic Skill Otomatis Romanov
         checkRomanovSkill(gameState.p1, gameState.p2);
         checkRomanovSkill(gameState.p2, gameState.p1);
-
         document.getElementById('p1-hp-fill').style.width = (gameState.p1.hp / 10 * 100) + "%";
         document.getElementById('p2-hp-fill').style.width = (gameState.p2.hp / 10 * 100) + "%";
         document.getElementById('p1-hp-text').innerText = `HP: ${gameState.p1.hp}/${gameState.p1.maxHp}`;
@@ -673,8 +685,6 @@ if (userGuess && !skillMati) {
             user.romanovUsed = true;
             enemy.hp = Math.max(0, enemy.hp - 2);
             addLog(`🔥 HELLFIRE EXPLOSION! Romanov membakar lawan: -2 Damage Otomatis!`);
-            
-            // Re-aktifkan skill Ulalek jika terkena damage dari ledakan ini
             if (enemy.id === 'ulalek' && !enemy.skillActive) {
                 enemy.skillActive = true;
                 addLog(`${enemy.name} terkena damage! Gaze of the Void aktif kembali.`);
