@@ -290,6 +290,7 @@
     function toggleRules() { document.getElementById('rule-modal').classList.toggle('hidden'); }
 
     const MONSTERS = [
+        { id: 'lorthos', name: 'Lorthos', element: 'water', color: '#2980b9', img: 'lorthos.png', skill: 'Tidal Regeneration: Jika HP di bawah 5, angka Ganjil memulihkan 2 HP (bukan 1).' },
         { id: 'romanov', name: 'Romanov', element: 'fire', color: '#e74c3c', img: 'romanov.png', skill: 'Hellfire Explosion: Jika HP mencapai 4 atau kurang, lawan langsung terkena 2 damage otomatis (1x).' },
         { id: 'ryusei', name: 'Ryusei', element: 'fire', color: '#ff4d4d', img: 'ryusei.png', skill: "Dragon's Scale: Jika terkena damage GENAP, serangan musuh di giliran berikutnya dipaksa meleset." },
         { id: 'dorballom', name: 'Dorballom', element: 'dark', color: '#8e44ad', img: 'dorballom.png', skill: ' Cursed Aura: Kurangi Max HP musuh.' },
@@ -312,10 +313,8 @@
     ];
 
     let gameState = { mode: '', step: 0, p1: null, p2: null, turn: 1, isRolling: false, tempSelected: null };
-
     function backToLobby() {
-        gameState.step = 0; gameState.p1 = null; gameState.p2 = null;
-        gameState.tempSelected = null;
+        gameState.step = 0; gameState.p1 = null; gameState.p2 = null; gameState.tempSelected = null;
         document.getElementById('selection-screen').classList.add('hidden');
         document.getElementById('main-menu').classList.remove('hidden');
     }
@@ -463,8 +462,6 @@
 
         if (roll % 2 === 0) { 
             let dmg = 2;
-
-            // --- SKILL SEPTIMUS: SHIELD BARRIER ---
             if (defender.id === 'septimus' && (roll === 2 || roll === 4) && !skillMati) {
                 let septimusRoll = Math.floor(Math.random() * 6) + 1;
                 addLog(`Shield Barrier! Septimus roll balasan: ${septimusRoll}`);
@@ -523,7 +520,6 @@
                         addLog(`Dragon's Scale: Serangan kedua dipaksa meleset!`);
                         attacker.dragonScaleDebuff = false;
                     }
-            
                     if (secondRoll % 2 === 0) {
                         let bonusDmg = 3; 
                         if (defender.id === 'grist') bonusDmg -= 1;
@@ -582,8 +578,14 @@
                 }
 
                 if (attacker.element === 'water' && !skillMati) {
-                    attacker.hp = Math.min(attacker.maxHp, attacker.hp + 1);
-                    addLog(`Purify! Pulih 1 HP`);
+                    let heal = 1;
+                    if (attacker.id === 'lorthos' && attacker.hp < 5) {
+                        heal = 2;
+                        addLog(`Tidal Regeneration! Lorthos pulih 2 HP.`);
+                    } else {
+                        addLog(`Purify! Pulih 1 HP`);
+                    }
+                    attacker.hp = Math.min(attacker.maxHp, attacker.hp + heal);
                     if (attacker.id === 'emrakul') {
                         attacker.abyssalShield = true;
                         addLog(`Abyssal Tide Disiapkan!`);
