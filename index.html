@@ -81,21 +81,6 @@
         transform: scale(1.03); }
         .menu-btn:disabled { opacity: 0.5; cursor: not-allowed; }
 
-        .music-ctrl {
-            background: rgba(0, 0, 0, 0.6);
-            border: 1px solid var(--accent-gold);
-            color: var(--accent-gold);
-            padding: 5px 12px;
-            border-radius: 20px;
-            cursor: pointer;
-            font-size: 0.8em;
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            transition: 0.3s;
-            margin-bottom: 10px;
-        }
-
         .arena { 
             display: flex;
             flex-wrap: wrap; justify-content: space-around; 
@@ -233,11 +218,6 @@
 </head>
 <body>
 
-<audio id="sfx-click" src="https://assets.mixkit.co/active_storage/sfx/2568/2568-preview.mp3"></audio>
-<audio id="sfx-hit" src="https://assets.mixkit.co/active_storage/sfx/2791/2791-preview.mp3"></audio>
-<audio id="sfx-heal" src="https://assets.mixkit.co/active_storage/sfx/1992/1992-preview.mp3"></audio>
-<audio id="sfx-miss" src="https://assets.mixkit.co/active_storage/sfx/2571/2571-preview.mp3"></audio>
-
 <div id="loading-screen">
     <h2 style="color:white; text-shadow: 2px 2px 4px #000; font-size: 1.2em;">Loading...</h2>
     <div class="loader"><div class="loader-fill" id="load-bar"></div></div>
@@ -274,15 +254,6 @@
     </div>
 
     <div id="battle-screen" class="hidden">
-        <div style="display: flex; justify-content: flex-end;">
-            <button class="music-ctrl" onclick="toggleMusic()">
-                <span id="music-icon">▶️</span> <span id="music-text">Play Music</span>
-            </button>
-        </div>
-        <audio id="bg-music" loop>
-            <source src="MADAMVデュエルマスターズビクトリーMyビクトリー.mp3" type="audio/mpeg">
-        </audio>
-
         <div class="arena">
             <div class="player-side">
                 <h4 id="p1-name" style="margin: 5px 0;">P1</h4>
@@ -309,28 +280,6 @@
 </div>
 
 <script>
-    const bgMusic = document.getElementById('bg-music');
-    const musicIcon = document.getElementById('music-icon');
-    const musicText = document.getElementById('music-text');
-
-    function playSFX(id) {
-        const sfx = document.getElementById(id);
-        if (sfx) {
-            sfx.currentTime = 0;
-            sfx.play().catch(e => console.log("SFX blocked"));
-        }
-    }
-
-    function toggleMusic() {
-        if (bgMusic.paused) {
-            bgMusic.play().catch(e => console.log("Audio play blocked"));
-            musicIcon.innerText = "⏸️"; musicText.innerText = "Pause";
-        } else {
-            bgMusic.pause();
-            musicIcon.innerText = "▶️"; musicText.innerText = "Play";
-        }
-    }
-
     window.onload = () => {
         let progress = 0;
         const loadBar = document.getElementById('load-bar');
@@ -349,11 +298,9 @@
     };
 
     function toggleRules() { 
-        playSFX('sfx-click');
         document.getElementById('rule-modal').classList.toggle('hidden');
     }
 
-    // UPDATE: Monster List diganti sesuai permintaan
     const MONSTERS = [
         { 
             id: 'toxickrawler', 
@@ -376,7 +323,6 @@
     let gameState = { mode: '', step: 0, p1: null, p2: null, turn: 1, isRolling: false, tempSelected: null };
 
     function backToLobby() {
-        playSFX('sfx-click');
         gameState.step = 0; gameState.p1 = null; gameState.p2 = null;
         gameState.tempSelected = null;
         document.getElementById('selection-screen').classList.add('hidden');
@@ -384,7 +330,6 @@
     }
 
     function startSelection(mode) {
-        playSFX('sfx-click');
         gameState.mode = mode;
         gameState.step = 0; gameState.p1 = null; gameState.p2 = null;
         document.getElementById('main-menu').classList.add('hidden');
@@ -402,7 +347,6 @@
             card.className = `char-card ${isTaken ? 'disabled' : ''}`;
             card.onclick = () => {
                 if (isTaken) return;
-                playSFX('sfx-click');
                 document.querySelectorAll('.char-card').forEach(c => c.classList.remove('selected'));
                 card.classList.add('selected');
                 gameState.tempSelected = m;
@@ -417,7 +361,6 @@
     }
 
     function confirmSelection() {
-        playSFX('sfx-click');
         if (!gameState.tempSelected) return alert("Pilih monster!");
         if (gameState.step === 0) {
             gameState.p1 = { ...gameState.tempSelected, hp: 10, maxHp: 10, skipTurn: false, skillActive: true };
@@ -467,43 +410,33 @@
         let defender = gameState.turn === 1 ? gameState.p2 : gameState.p1;
 
         if (roll % 2 === 0) { 
-            // Serangan Berhasil (Genap)
             let dmg = 2;
             if (attacker.element === 'fire') dmg = 3;
             if (defender.element === 'light') dmg = 1;
             
-            // Skill: Toxic Krawler (Corrosive)
             if (defender.id === 'toxickrawler') {
                 attacker.hp = Math.max(0, attacker.hp - 1);
                 addLog(`Corrosive! ${defender.name} memberi 1 damage balik ke penyerang.`);
-                playSFX('sfx-hit');
             }
 
             defender.hp = Math.max(0, defender.hp - dmg);
             addLog(`${attacker.name} Hit! -${dmg} HP`);
-            playSFX('sfx-hit');
 
             if (attacker.element === 'dark') {
                 attacker.hp = Math.min(attacker.maxHp, attacker.hp + 1);
                 addLog(`Vampiric! ${attacker.name} pulih 1 HP`);
-                playSFX('sfx-heal');
             }
         } else { 
-            // Serangan Gagal (Ganjil)
             addLog(`${attacker.name} Miss.`);
-            playSFX('sfx-miss');
 
-            // Skill: Butcher (Hook)
             if (defender.id === 'butcher') {
                 attacker.hp = Math.max(0, attacker.hp - 1);
                 addLog(`Hook! Karena ganjil, ${attacker.name} terkena 1 damage dari Butcher.`);
-                playSFX('sfx-hit');
             }
 
             if (attacker.element === 'water') {
                 attacker.hp = Math.min(attacker.maxHp, attacker.hp + 1);
                 addLog(`Purify! Pulih 1 HP`);
-                playSFX('sfx-heal');
             }
         }
         updateUI();
@@ -525,14 +458,11 @@
 
     function startNewTurn() {
         let act = gameState.turn === 1 ? gameState.p1 : gameState.p2;
-        let tar = gameState.turn === 1 ? gameState.p2 : gameState.p1;
-
         document.getElementById('turn-indicator').innerText = `GILIRAN ${act.name}`;
         
         if (act.element === 'nature' && act.hp % 2 !== 0) {
             act.hp = Math.min(act.maxHp, act.hp + 1);
             addLog(`Regrow: HP Ganjil, ${act.name} pulih 1 HP`);
-            playSFX('sfx-heal');
         }
         
         updateUI();
