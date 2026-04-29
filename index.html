@@ -208,6 +208,30 @@
             border-radius: 5px;
         }
 
+        /* --- Audio Control Style --- */
+        #music-control {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 10001;
+            background: rgba(0, 0, 0, 0.7);
+            border: 1px solid var(--accent-gold);
+            color: var(--accent-gold);
+            border-radius: 50%;
+            width: 45px;
+            height: 45px;
+            cursor: pointer;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 1.2em;
+            transition: 0.3s;
+        }
+        #music-control:hover {
+            transform: scale(1.1);
+            background: rgba(241, 196, 15, 0.2);
+        }
+
         @media (max-width: 800px) {
             .battle-img { width: 45mm; height: 63mm; }
             .player-side { width: 48%; padding: 5px; }
@@ -217,6 +241,14 @@
     </style>
 </head>
 <body>
+
+<audio id="bg-music" loop>
+    <source src="運命は君の手に.mp3" type="audio/mpeg">
+</audio>
+
+<button id="music-control" onclick="toggleMusic()" title="Play/Pause Music">
+    <span id="music-icon">▶</span>
+</button>
 
 <div id="loading-screen">
     <h2 style="color:white; text-shadow: 2px 2px 4px #000; font-size: 1.2em;">Loading...</h2>
@@ -280,6 +312,20 @@
 </div>
 
 <script>
+    /* --- Audio Logic --- */
+    const music = document.getElementById('bg-music');
+    const musicIcon = document.getElementById('music-icon');
+
+    function toggleMusic() {
+        if (music.paused) {
+            music.play();
+            musicIcon.innerText = "⏸";
+        } else {
+            music.pause();
+            musicIcon.innerText = "▶";
+        }
+    }
+
     window.onload = () => {
         let progress = 0;
         const loadBar = document.getElementById('load-bar');
