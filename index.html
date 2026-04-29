@@ -350,12 +350,19 @@
         updateUI();
     } 
 
-    // Logika Perubahan Grist ke Plague (HP < 50 berarti 49 ke bawah)
+    // Logika Perubahan Grist ke Plague (DIPERBAIKI: Menggunakan parameter prefix yang benar)
     function checkTransformation(entity, prefix) {
         if (entity.charType === 'grist' && entity.hp < 50 && !entity.transformed) {
             entity.transformed = true;
             entity.charType = 'plague'; 
-            entity.name = (prefix === 'p' ? "" : (entity.isAI ? "AI " : "P2 ")) + "PLAGUE";
+            
+            // Logika penamaan ulang
+            if (prefix === 'p') {
+                entity.name = "PLAGUE";
+            } else {
+                entity.name = (entity.isAI ? "AI " : "P2 ") + "PLAGUE";
+            }
+            
             addLog(`<b>WASPADA! ${entity.name} telah bangkit!</b>`); 
             setupBattleUI(); 
         }
@@ -396,6 +403,10 @@
     }
 
     function updateUI() {
+        // Cek transformasi SEBELUM update teks/visual (agar perubahan instan)
+        checkTransformation(player, 'p');
+        checkTransformation(enemy, 'e');
+
         document.getElementById('p-hp-text').innerText = player.hp;
         document.getElementById('e-hp-text').innerText = enemy.hp; 
         document.getElementById('p-hp-fill').style.width = (player.hp / player.maxHp * 100) + "%";
@@ -410,8 +421,6 @@
     async function mulaiGiliran() {
         if (gameMode === 'multiplayer' && activePlayer !== 1) return;
         document.getElementById('btn-attack').disabled = true; 
-
-        checkTransformation(player, 'p');
         
         let initialDamage = Math.floor(Math.random() * 20) + 1; 
         addLog(`${player.name} Roll: <b>${initialDamage}</b>`);
@@ -451,7 +460,6 @@
 
     async function mulaiGiliranP2() {
         document.getElementById('btn-attack-p2').disabled = true;
-        checkTransformation(enemy, 'e'); 
 
         let initialDamage = Math.floor(Math.random() * 20) + 1;
         addLog(`${enemy.name} Roll: <b>${initialDamage}</b>`); 
@@ -485,8 +493,6 @@
     } 
 
     async function mulaiGiliranAI() {
-        checkTransformation(enemy, 'e');
-        
         let initialDamage = Math.floor(Math.random() * 20) + 1;
         addLog(`AI Roll: <b>${initialDamage}</b>`);
 
