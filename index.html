@@ -28,7 +28,7 @@
             align-items: center;
             min-height: 100vh;
             overflow-x: hidden;
-            padding: 20px;
+            padding: 10px;
             box-sizing: border-box;
         }
 
@@ -56,10 +56,10 @@
         }
 
         #game-container {
-            width: 95%;
-            max-width: 1000px; 
+            width: 100%;
+            max-width: 800px; 
             background: rgba(15, 15, 15, 0.94);
-            padding: 25px;
+            padding: 15px;
             border-radius: 15px;
             box-shadow: 0 0 40px rgba(0,0,0,1);
             text-align: center;
@@ -73,9 +73,9 @@
         .menu-btn {
             background: linear-gradient(to bottom, #444, #111);
             color: white; border: 2px solid #555;
-            padding: 12px 20px; margin: 8px; cursor: pointer;
-            font-size: 1.1em; border-radius: 8px; transition: 0.3s;
-            min-width: 200px; font-weight: bold; text-transform: uppercase;
+            padding: 10px 15px; margin: 5px; cursor: pointer;
+            font-size: 1em; border-radius: 8px; transition: 0.3s;
+            min-width: 180px; font-weight: bold; text-transform: uppercase;
         }
         .menu-btn:hover:not(:disabled) { border-color: var(--accent-gold); color: var(--accent-gold);
         transform: scale(1.03); }
@@ -83,34 +83,38 @@
 
         .arena { 
             display: flex;
-            flex-wrap: wrap; justify-content: space-around; 
+            justify-content: space-between; 
             margin-top: 5px; padding: 10px;
             background-image: url('battle.png'); background-size: cover;
             background-position: center; border-radius: 12px; border: 2px solid #444;
-            min-height: 350px;
+            min-height: 250px;
             align-items: center;
+            gap: 5px;
         }
 
         .player-side { 
-            width: auto;
-            padding: 15px; background: rgba(0,0,0,0.7); 
+            flex: 1;
+            padding: 8px; background: rgba(0,0,0,0.7); 
             border-radius: 10px; border: 1px solid rgba(255,255,255,0.1);
             display: flex;
             flex-direction: column;
             align-items: center;
+            max-width: 40%;
         }
 
+        /* Ukuran Gambar Battle Dioptimalkan untuk Mobile */
         .battle-img { 
-            width: 63mm;
-            height: 88mm; 
-            object-fit: fill;
+            width: 100%;
+            max-width: 120px;
+            aspect-ratio: 63/88;
+            object-fit: cover;
             filter: drop-shadow(0 0 8px black); 
-            border-radius: 8px;
-            margin-bottom: 10px;
+            border-radius: 6px;
+            margin-bottom: 8px;
         }
 
         .hp-bar { 
-            height: 25px;
+            height: 18px;
             width: 100%; background-image: url('darah.png'); 
             background-size: cover; background-repeat: no-repeat;
             background-position: center; margin: 5px 0; position: relative; 
@@ -124,21 +128,21 @@
         }
 
         .dice-section {
+            flex: 0.5;
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            padding: 10px;
         }
 
-        .dice-box { font-size: 3.5em;
+        .dice-box { font-size: 2.5em;
             color: var(--accent-gold); text-shadow: 0 0 15px rgba(241, 196, 15, 0.6);
         }
 
         #log {
-            height: 80px;
+            height: 60px;
             overflow-y: auto; background: rgba(0,0,0,0.85);
-            padding: 8px; text-align: left; font-size: 0.8em;
+            padding: 8px; text-align: left; font-size: 0.75em;
             margin-top: 10px; border-radius: 8px; border: 1px solid #444; color: #ccc;
         }
 
@@ -151,92 +155,80 @@
         .modal-content {
             background: #1a1a1a;
             padding: 15px; border-radius: 10px;
-            max-width: 85%; max-height: 85%; text-align: center;
+            max-width: 90%; max-height: 90%; text-align: center;
             border: 2px solid var(--accent-gold);
         }
-        .modal-content img { max-width: 100%; max-height: 400px; border-radius: 5px; object-fit: contain; }
+        .modal-content img { max-width: 100%; max-height: 70vh; border-radius: 5px; object-fit: contain; }
+
+        /* --- Kartu Seleksi Karakter Mobile Friendly --- */
+        #monster-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+            gap: 10px;
+            padding: 10px;
+        }
 
         .char-card {
-            display: inline-block;
-            width: 63mm; 
-            height: auto;
-            min-height: 88mm;
-            padding: 10px;
-            margin: 10px;
             background: linear-gradient(145deg, #1a1a1a, #252525);
             border: 2px solid #444;
-            border-radius: 12px;
+            border-radius: 10px;
+            padding: 8px;
             cursor: pointer;
-            font-size: 0.9em;
-            vertical-align: top;
-            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            transition: 0.3s;
             position: relative;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.5);
-            box-sizing: border-box;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.5);
         }
         
-        .char-card:hover { transform: translateY(-10px) scale(1.05); border-color: #666; z-index: 10; }
-        .char-card.selected { border-color: var(--accent-gold); box-shadow: 0 0 20px var(--accent-gold); }
-        .char-card.disabled { opacity: 0.4; cursor: not-allowed; filter: grayscale(1); pointer-events: none; }
+        .char-card:hover { transform: scale(1.02); border-color: #666; }
+        .char-card.selected { border-color: var(--accent-gold); box-shadow: 0 0 15px var(--accent-gold); }
+        .char-card.disabled { opacity: 0.4; filter: grayscale(1); pointer-events: none; }
         .char-card.disabled::after {
-            content: "SUDAH DIPILIH";
+            content: "DIPILIH";
             position: absolute; top: 50%; left: 50%;
-            transform: translate(-50%, -50%) rotate(-20deg);
-            background: rgba(255, 0, 0, 0.8); color: white;
-            padding: 5px 10px;
-            font-weight: bold; font-size: 0.9em; border-radius: 4px;
-            z-index: 2;
+            transform: translate(-50%, -50%) rotate(-15deg);
+            background: rgba(255, 0, 0, 0.9); color: white;
+            padding: 2px 8px; font-weight: bold; font-size: 0.7em; border-radius: 4px;
         }
 
         .monster-thumb { 
             width: 100%;
-            height: 140px; 
+            aspect-ratio: 1/1;
             object-fit: contain;
-            border-radius: 8px;
-            margin-bottom: 8px;
+            border-radius: 5px;
+            margin-bottom: 5px;
             background: rgba(0,0,0,0.3);
         }
         .skill-text {
             display: block;
-            margin-top: 8px; 
-            font-size: 0.75em; 
-            color: #ddd;
-            line-height: 1.3; 
-            font-style: normal;
-            background: rgba(0,0,0,0.5);
-            padding: 5px;
-            border-radius: 5px;
+            font-size: 0.65em; 
+            color: #bbb;
+            line-height: 1.2; 
+            background: rgba(0,0,0,0.4);
+            padding: 4px;
+            border-radius: 4px;
+            margin-top: 5px;
         }
 
-        /* --- Audio Control Style --- */
         #music-control {
             position: fixed;
-            top: 20px;
-            right: 20px;
+            top: 15px; right: 15px;
             z-index: 10001;
             background: rgba(0, 0, 0, 0.7);
             border: 1px solid var(--accent-gold);
             color: var(--accent-gold);
             border-radius: 50%;
-            width: 45px;
-            height: 45px;
+            width: 40px; height: 40px;
             cursor: pointer;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            font-size: 1.2em;
-            transition: 0.3s;
-        }
-        #music-control:hover {
-            transform: scale(1.1);
-            background: rgba(241, 196, 15, 0.2);
+            display: flex; justify-content: center; align-items: center;
         }
 
-        @media (max-width: 800px) {
-            .battle-img { width: 45mm; height: 63mm; }
-            .player-side { width: 48%; padding: 5px; }
-            .arena { flex-direction: row; }
-            .char-card { width: 45mm; min-height: 63mm; }
+        @media (max-width: 480px) {
+            h1 { font-size: 1.2em; }
+            .menu-btn { min-width: 150px; font-size: 0.9em; }
+            .battle-img { max-width: 90px; }
+            #monster-list { grid-template-columns: 1fr 1fr; }
+            .dice-box { font-size: 2em; }
+            #turn-indicator { font-size: 0.8em; }
         }
     </style>
 </head>
@@ -251,7 +243,7 @@
 </button>
 
 <div id="loading-screen">
-    <h2 style="color:white; text-shadow: 2px 2px 4px #000; font-size: 1.2em;">Loading...</h2>
+    <h2 style="color:white; text-shadow: 2px 2px 4px #000; font-size: 1em;">Loading...</h2>
     <div class="loader"><div class="loader-fill" id="load-bar"></div></div>
 </div>
 
@@ -267,9 +259,9 @@
 <div id="game-container" class="hidden">
  
     <div id="main-menu">
-        <img src="cover.png" alt="Logo" style="width: 150px; margin-bottom: 15px; border-radius: 12px; box-shadow: 0 0 20px rgba(241, 196, 15, 0.3);">
-        <h1 style="margin: 10px 0; letter-spacing: 2px;">ELEMENTAL DICE DUEL</h1>
-        <div style="display: flex; flex-direction: column; align-items: center; margin-top: 20px;">
+        <img src="cover.png" alt="Logo" style="width: 120px; margin-bottom: 10px; border-radius: 12px; box-shadow: 0 0 20px rgba(241, 196, 15, 0.3);">
+        <h1 style="margin: 5px 0; letter-spacing: 1px;">ELEMENTAL DICE DUEL</h1>
+        <div style="display: flex; flex-direction: column; align-items: center; margin-top: 15px;">
             <button class="menu-btn" onclick="startSelection('pvp')">Multiplayer</button>
             <button class="menu-btn" onclick="startSelection('pve')">VS AI</button>
             <button class="menu-btn" onclick="toggleRules()" style="background: linear-gradient(to bottom, #555, #222);">Rulebook</button>
@@ -277,34 +269,34 @@
     </div>
 
     <div id="selection-screen" class="hidden">
-        <h2 id="selection-title" style="font-size: 1.2em;">Pilih Monster Pemain 1</h2>
-        <div id="monster-list" style="max-height: 500px; overflow-y: auto; margin-bottom: 10px; padding: 10px;"></div>
-        <div style="display: flex; justify-content: center; gap: 10px; flex-wrap: wrap;">
-            <button class="menu-btn" style="background: linear-gradient(to bottom, #777, #333); min-width: 120px;" onclick="backToLobby()">Kembali</button>
-            <button class="menu-btn" id="confirm-btn" style="min-width: 120px;" onclick="confirmSelection()">Konfirmasi</button>
+        <h2 id="selection-title" style="font-size: 1.1em; margin: 5px 0;">Pilih Monster Pemain 1</h2>
+        <div id="monster-list" style="max-height: 60vh; overflow-y: auto; margin-bottom: 10px; border: 1px solid #333; border-radius: 10px;"></div>
+        <div style="display: flex; justify-content: center; gap: 8px;">
+            <button class="menu-btn" style="background: linear-gradient(to bottom, #777, #333); min-width: 100px;" onclick="backToLobby()">Batal</button>
+            <button class="menu-btn" id="confirm-btn" style="min-width: 100px;" onclick="confirmSelection()">Pilih</button>
         </div>
     </div>
 
     <div id="battle-screen" class="hidden">
         <div class="arena">
             <div class="player-side">
-                <h4 id="p1-name" style="margin: 5px 0;">P1</h4>
+                <h4 id="p1-name" style="margin: 2px 0; font-size: 0.85em;">P1</h4>
                 <div id="p1-monster-img-box"></div>
                 <div class="hp-bar"><div id="p1-hp-fill" class="hp-fill"></div></div>
-                <div id="p1-hp-text" style="font-size: 0.8em;">HP: 10/10</div>
+                <div id="p1-hp-text" style="font-size: 0.7em;">HP: 10/10</div>
             </div>
 
             <div class="dice-section">
                 <div class="dice-box" id="dice-display">🎲</div>
-                <h5 id="turn-indicator" style="margin: 5px 0;">GILIRAN P1</h5>
-                <button class="menu-btn" id="roll-btn" onclick="handleRoll()" style="min-width: 80px; padding: 8px 15px;">ROLL!</button>
+                <h5 id="turn-indicator" style="margin: 5px 0; font-size: 0.7em;">GILIRAN P1</h5>
+                <button class="menu-btn" id="roll-btn" onclick="handleRoll()" style="min-width: 70px; padding: 6px 10px; font-size: 0.8em;">ROLL!</button>
             </div>
 
             <div class="player-side">
-                <h4 id="p2-name" style="margin: 5px 0;">P2</h4>
+                <h4 id="p2-name" style="margin: 2px 0; font-size: 0.85em;">P2</h4>
                 <div id="p2-monster-img-box"></div>
                 <div class="hp-bar"><div id="p2-hp-fill" class="hp-fill"></div></div>
-                <div id="p2-hp-text" style="font-size: 0.8em;">HP: 10/10</div>
+                <div id="p2-hp-text" style="font-size: 0.7em;">HP: 10/10</div>
             </div>
         </div>
         <div id="log"></div>
@@ -312,7 +304,7 @@
 </div>
 
 <script>
-    /* --- Audio Logic --- */
+    /* --- Logic tetap sama dengan kode asli Anda --- */
     const music = document.getElementById('bg-music');
     const musicIcon = document.getElementById('music-icon');
 
@@ -354,7 +346,7 @@
             element: 'nature', 
             color: '#2ecc71', 
             img: 'toxickrawler.png', 
-            skill: 'Corrosive: Setiap kali musuh menyerangmu dengan dadu genap, musuh terkena 1 damage.' 
+            skill: 'Corrosive: Jika musuh roll Genap, musuh kena 1 damage.' 
         },
         { 
             id: 'butcher', 
@@ -362,7 +354,7 @@
             element: 'dark', 
             color: '#8e44ad', 
             img: 'butcher.png', 
-            skill: 'Hook: Jika hasil dadu lawan adalah Ganjil (1, 3, 5), selain musuh gagal menyerang, musuh juga terkena 1 Damage.' 
+            skill: 'Hook: Jika musuh roll Ganjil, musuh kena 1 Damage.' 
         }
     ];
 
@@ -399,7 +391,7 @@
             };
             card.innerHTML = `
                 <img src="${m.img}" class="monster-thumb" onerror="this.src='https://via.placeholder.com/150x150?text=Card'">
-                <div style="font-weight:bold; font-size: 1.1em; color:${m.color}">${m.name}</div>
+                <div style="font-weight:bold; font-size: 0.9em; color:${m.color}">${m.name}</div>
                 <span class="skill-text">${m.skill}</span>
             `;
             list.appendChild(card);
@@ -462,7 +454,7 @@
             
             if (defender.id === 'toxickrawler') {
                 attacker.hp = Math.max(0, attacker.hp - 1);
-                addLog(`Corrosive! ${defender.name} memberi 1 damage balik ke penyerang.`);
+                addLog(`Corrosive! ${defender.name} counter 1 dmg.`);
             }
 
             defender.hp = Math.max(0, defender.hp - dmg);
@@ -470,19 +462,19 @@
 
             if (attacker.element === 'dark') {
                 attacker.hp = Math.min(attacker.maxHp, attacker.hp + 1);
-                addLog(`Vampiric! ${attacker.name} pulih 1 HP`);
+                addLog(`Vampiric! ${attacker.name} +1 HP`);
             }
         } else { 
             addLog(`${attacker.name} Miss.`);
 
             if (defender.id === 'butcher') {
                 attacker.hp = Math.max(0, attacker.hp - 1);
-                addLog(`Hook! Karena ganjil, ${attacker.name} terkena 1 damage dari Butcher.`);
+                addLog(`Hook! ${attacker.name} kena 1 dmg.`);
             }
 
             if (attacker.element === 'water') {
                 attacker.hp = Math.min(attacker.maxHp, attacker.hp + 1);
-                addLog(`Purify! Pulih 1 HP`);
+                addLog(`Purify! +1 HP`);
             }
         }
         updateUI();
@@ -508,7 +500,7 @@
         
         if (act.element === 'nature' && act.hp % 2 !== 0) {
             act.hp = Math.min(act.maxHp, act.hp + 1);
-            addLog(`Regrow: HP Ganjil, ${act.name} pulih 1 HP`);
+            addLog(`Regrow: ${act.name} +1 HP`);
         }
         
         updateUI();
