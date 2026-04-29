@@ -87,7 +87,7 @@
             margin-top: 5px; padding: 10px;
             background-image: url('battle.png'); background-size: cover;
             background-position: center; border-radius: 12px; border: 2px solid #444;
-            min-height: 250px;
+            min-height: 200px; /* Diperkecil dari 250px */
             align-items: center;
             gap: 5px;
         }
@@ -102,19 +102,19 @@
             max-width: 40%;
         }
 
-        /* Ukuran Gambar Battle Dioptimalkan untuk Mobile */
+        /* UKURAN GAMBAR DI ARENA (DIPERKECIL) */
         .battle-img { 
             width: 100%;
-            max-width: 120px;
+            max-width: 85px; /* Diperkecil dari 120px */
             aspect-ratio: 63/88;
             object-fit: cover;
             filter: drop-shadow(0 0 8px black); 
             border-radius: 6px;
-            margin-bottom: 8px;
+            margin-bottom: 5px;
         }
 
         .hp-bar { 
-            height: 18px;
+            height: 14px; /* Diperkecil sedikit */
             width: 100%; background-image: url('darah.png'); 
             background-size: cover; background-repeat: no-repeat;
             background-position: center; margin: 5px 0; position: relative; 
@@ -135,14 +135,14 @@
             justify-content: center;
         }
 
-        .dice-box { font-size: 2.5em;
+        .dice-box { font-size: 2.2em; /* Diperkecil sedikit */
             color: var(--accent-gold); text-shadow: 0 0 15px rgba(241, 196, 15, 0.6);
         }
 
         #log {
-            height: 60px;
+            height: 50px; /* Diperkecil */
             overflow-y: auto; background: rgba(0,0,0,0.85);
-            padding: 8px; text-align: left; font-size: 0.75em;
+            padding: 8px; text-align: left; font-size: 0.7em;
             margin-top: 10px; border-radius: 8px; border: 1px solid #444; color: #ccc;
         }
 
@@ -160,11 +160,11 @@
         }
         .modal-content img { max-width: 100%; max-height: 70vh; border-radius: 5px; object-fit: contain; }
 
-        /* --- Kartu Seleksi Karakter Mobile Friendly --- */
+        /* --- KARTU SELEKSI (DIPERKECIL) --- */
         #monster-list {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
-            gap: 10px;
+            grid-template-columns: repeat(auto-fit, minmax(110px, 1fr)); /* Diperkecil dari 130px */
+            gap: 8px;
             padding: 10px;
         }
 
@@ -172,7 +172,7 @@
             background: linear-gradient(145deg, #1a1a1a, #252525);
             border: 2px solid #444;
             border-radius: 10px;
-            padding: 8px;
+            padding: 6px; /* Diperkecil */
             cursor: pointer;
             transition: 0.3s;
             position: relative;
@@ -192,15 +192,17 @@
 
         .monster-thumb { 
             width: 100%;
+            max-width: 80px; /* Batasi lebar maksimal thumbnail */
             aspect-ratio: 1/1;
             object-fit: contain;
             border-radius: 5px;
-            margin-bottom: 5px;
+            margin: 0 auto 5px auto;
             background: rgba(0,0,0,0.3);
+            display: block;
         }
         .skill-text {
             display: block;
-            font-size: 0.65em; 
+            font-size: 0.6em; /* Diperkecil */
             color: #bbb;
             line-height: 1.2; 
             background: rgba(0,0,0,0.4);
@@ -217,18 +219,19 @@
             border: 1px solid var(--accent-gold);
             color: var(--accent-gold);
             border-radius: 50%;
-            width: 40px; height: 40px;
+            width: 35px; height: 35px;
             cursor: pointer;
             display: flex; justify-content: center; align-items: center;
         }
 
         @media (max-width: 480px) {
-            h1 { font-size: 1.2em; }
-            .menu-btn { min-width: 150px; font-size: 0.9em; }
-            .battle-img { max-width: 90px; }
+            h1 { font-size: 1.1em; }
+            .menu-btn { min-width: 140px; font-size: 0.85em; }
+            .battle-img { max-width: 70px; } /* Ukuran sangat ringkas di mobile */
             #monster-list { grid-template-columns: 1fr 1fr; }
-            .dice-box { font-size: 2em; }
-            #turn-indicator { font-size: 0.8em; }
+            .dice-box { font-size: 1.8em; }
+            #turn-indicator { font-size: 0.75em; }
+            .arena { min-height: 180px; }
         }
     </style>
 </head>
@@ -259,7 +262,7 @@
 <div id="game-container" class="hidden">
  
     <div id="main-menu">
-        <img src="cover.png" alt="Logo" style="width: 120px; margin-bottom: 10px; border-radius: 12px; box-shadow: 0 0 20px rgba(241, 196, 15, 0.3);">
+        <img src="cover.png" alt="Logo" style="width: 100px; margin-bottom: 10px; border-radius: 12px; box-shadow: 0 0 20px rgba(241, 196, 15, 0.3);">
         <h1 style="margin: 5px 0; letter-spacing: 1px;">ELEMENTAL DICE DUEL</h1>
         <div style="display: flex; flex-direction: column; align-items: center; margin-top: 15px;">
             <button class="menu-btn" onclick="startSelection('pvp')">Multiplayer</button>
@@ -269,8 +272,8 @@
     </div>
 
     <div id="selection-screen" class="hidden">
-        <h2 id="selection-title" style="font-size: 1.1em; margin: 5px 0;">Pilih Monster Pemain 1</h2>
-        <div id="monster-list" style="max-height: 60vh; overflow-y: auto; margin-bottom: 10px; border: 1px solid #333; border-radius: 10px;"></div>
+        <h2 id="selection-title" style="font-size: 1em; margin: 5px 0;">Pilih Monster Pemain 1</h2>
+        <div id="monster-list" style="max-height: 55vh; overflow-y: auto; margin-bottom: 10px; border: 1px solid #333; border-radius: 10px;"></div>
         <div style="display: flex; justify-content: center; gap: 8px;">
             <button class="menu-btn" style="background: linear-gradient(to bottom, #777, #333); min-width: 100px;" onclick="backToLobby()">Batal</button>
             <button class="menu-btn" id="confirm-btn" style="min-width: 100px;" onclick="confirmSelection()">Pilih</button>
@@ -280,23 +283,23 @@
     <div id="battle-screen" class="hidden">
         <div class="arena">
             <div class="player-side">
-                <h4 id="p1-name" style="margin: 2px 0; font-size: 0.85em;">P1</h4>
+                <h4 id="p1-name" style="margin: 2px 0; font-size: 0.8em;">P1</h4>
                 <div id="p1-monster-img-box"></div>
                 <div class="hp-bar"><div id="p1-hp-fill" class="hp-fill"></div></div>
-                <div id="p1-hp-text" style="font-size: 0.7em;">HP: 10/10</div>
+                <div id="p1-hp-text" style="font-size: 0.65em;">HP: 10/10</div>
             </div>
 
             <div class="dice-section">
                 <div class="dice-box" id="dice-display">🎲</div>
-                <h5 id="turn-indicator" style="margin: 5px 0; font-size: 0.7em;">GILIRAN P1</h5>
-                <button class="menu-btn" id="roll-btn" onclick="handleRoll()" style="min-width: 70px; padding: 6px 10px; font-size: 0.8em;">ROLL!</button>
+                <h5 id="turn-indicator" style="margin: 5px 0; font-size: 0.65em;">GILIRAN P1</h5>
+                <button class="menu-btn" id="roll-btn" onclick="handleRoll()" style="min-width: 65px; padding: 5px 8px; font-size: 0.75em;">ROLL!</button>
             </div>
 
             <div class="player-side">
-                <h4 id="p2-name" style="margin: 2px 0; font-size: 0.85em;">P2</h4>
+                <h4 id="p2-name" style="margin: 2px 0; font-size: 0.8em;">P2</h4>
                 <div id="p2-monster-img-box"></div>
                 <div class="hp-bar"><div id="p2-hp-fill" class="hp-fill"></div></div>
-                <div id="p2-hp-text" style="font-size: 0.7em;">HP: 10/10</div>
+                <div id="p2-hp-text" style="font-size: 0.65em;">HP: 10/10</div>
             </div>
         </div>
         <div id="log"></div>
@@ -304,7 +307,7 @@
 </div>
 
 <script>
-    /* --- Logic tetap sama dengan kode asli Anda --- */
+    /* --- Logic tetap sama persis sesuai permintaan --- */
     const music = document.getElementById('bg-music');
     const musicIcon = document.getElementById('music-icon');
 
@@ -391,7 +394,7 @@
             };
             card.innerHTML = `
                 <img src="${m.img}" class="monster-thumb" onerror="this.src='https://via.placeholder.com/150x150?text=Card'">
-                <div style="font-weight:bold; font-size: 0.9em; color:${m.color}">${m.name}</div>
+                <div style="font-weight:bold; font-size: 0.8em; color:${m.color}">${m.name}</div>
                 <span class="skill-text">${m.skill}</span>
             `;
             list.appendChild(card);
