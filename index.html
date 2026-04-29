@@ -236,9 +236,25 @@
             #turn-indicator { font-size: 0.75em; }
             .arena { min-height: 180px; }
         }
+
+        header, footer {
+            position: fixed;
+            left: 0; width: 100%;
+            background: rgba(0,0,0,0.8);
+            color: var(--accent-gold);
+            padding: 5px;
+            font-size: 0.7em;
+            z-index: 999;
+            text-align: center;
+            border: 1px solid #333;
+        }
+        header { top: 0; }
+        footer { bottom: 0; }
     </style>
 </head>
 <body>
+
+<header>ELEMENTAL DICE DUEL - VERSION 2.0</header>
 
 <audio id="bg-music" loop>
     <source src="運命は君の手に.mp3" type="audio/mpeg">
@@ -310,6 +326,8 @@
     </div>
 </div>
 
+<footer>&copy; 2026 Elemental Dice Duel Edition</footer>
+
 <script>
     const music = document.getElementById('bg-music');
     const musicIcon = document.getElementById('music-icon');
@@ -346,19 +364,25 @@
     }
 
     const MONSTERS = [
-        { id: 'cahaya', name: 'Cahaya', element: 'light', color: '#f1c40f', img: 'light.png', skill: 'Veilskin: Jika musuh roll Genap, kurangi damage musuh (Dice/2, round up).' },
-        { id: 'api', name: 'Api', element: 'fire', color: '#e67e22', img: 'fire.png', skill: 'Blaze: Jika roll Genap, bonus damage (Dice/2, round down).' },
+        { id: 'cahaya', name: 'Cahaya', element: 'light', color: '#f1c40f', img: 'light.png', skill: 'Lucky: Saat kalah atau kena Roll 20 lawan, bertahan di 1 HP & +1 d20 turn depan.' },
+        { id: 'api', name: 'Api', element: 'fire', color: '#e67e22', img: 'fire.png', skill: 'Blaze: Jika roll Genap, bonus dmg (Dice/2, round down).' },
         { id: 'air', name: 'Air', element: 'water', color: '#3498db', img: 'water.png', skill: 'Purify: Jika roll Ganjil, pulihkan HP (Dice/2, round down).' },
-        { id: 'kegelapan', name: 'Kegelapan', element: 'dark', color: '#8e44ad', img: 'dark.png', skill: 'Vampiric: 50% peluang musuh kena X damage & kamu pulih X HP.' },
+        { id: 'kegelapan', name: 'Kegelapan', element: 'dark', color: '#8e44ad', img: 'dark.png', skill: 'Vampiric: 50% peluang musuh kena X dmg & kamu pulih X HP.' },
         { id: 'tumbuhan', name: 'Tumbuhan', element: 'nature', color: '#2ecc71', img: 'nature.png', skill: 'Regrow: End phase jika HP Ganjil, pulih HP (Dice/2, round down).' },
         { id: 'petir', name: 'Petir', element: 'thunder', color: '#f9ca24', img: 'thunder.png', skill: 'Shocks: End phase sendiri & lawan beri X damage (Dice/4, round down).' },
-        { id: 'tanah', name: 'Tanah', element: 'earth', color: '#a52a2a', img: 'earth.png', skill: 'Burrow: 20% + X% peluang imun serangan turn depan (X= Dice result).' }
+        { id: 'tanah', name: 'Tanah', element: 'earth', color: '#a52a2a', img: 'earth.png', skill: 'Burrow: 20% + X% peluang imun serangan turn depan (X= Dice result).' },
+        { id: 'batu', name: 'Batu', element: 'stone', color: '#95a5a6', img: 'stone.png', skill: 'Hardskin: 33% peluang kurangi damage musuh (Dice/2, round up).' }
     ];
 
-    let gameState = { mode: '', step: 0, p1: null, p2: null, turn: 1, isRolling: false, tempSelected: null, isImmune: [false, false] };
+    let gameState = { 
+        mode: '', step: 0, p1: null, p2: null, turn: 1, 
+        isRolling: false, tempSelected: null, isImmune: [false, false],
+        extraDice: [false, false] 
+    };
 
     function backToLobby() {
-        gameState.step = 0; gameState.p1 = null; gameState.p2 = null; gameState.tempSelected = null;
+        gameState.step = 0; gameState.p1 = null; gameState.p2 = null;
+        gameState.tempSelected = null;
         document.getElementById('selection-screen').classList.add('hidden');
         document.getElementById('main-menu').classList.remove('hidden');
     }
@@ -438,6 +462,15 @@
         setTimeout(() => {
             clearInterval(shuffle);
             let roll = Math.floor(Math.random() * 20) + 1;
+            
+            // Cahaya Extra Dice logic
+            if (gameState.extraDice[gameState.turn - 1]) {
+                let secondRoll = Math.floor(Math.random() * 20) + 1;
+                addLog(`Lucky! Dadu Tambahan: ${secondRoll}`);
+                roll += secondRoll;
+                gameState.extraDice[gameState.turn - 1] = false;
+            }
+
             diceEl.innerText = roll;
             processTurn(roll);
         }, 800);
@@ -450,7 +483,6 @@
         let defender = gameState.turn === 1 ? gameState.p2 : gameState.p1;
         let baseDmg = 0;
         let logMsg = "";
-
         attacker.lastRoll = roll;
 
         // 0. CHECK BURROW IMMUNITY
@@ -487,15 +519,27 @@
                 logMsg += ` (Vampiric steal ${vmp} HP!)`;
             }
 
-            // 3. APPLY DEFENDER SKILLS
-            if (defender.id === 'cahaya' && roll % 2 === 0 && baseDmg > 0) {
+            // 3. APPLY DEFENDER SKILLS (Batu Hardskin - 33% chance)
+            if (defender.id === 'batu' && baseDmg > 0 && Math.random() < 0.33) {
                 let reduce = Math.ceil(roll / 2);
                 baseDmg = Math.max(0, baseDmg - reduce);
-                logMsg += ` (Veilskin -${reduce} DMG!)`;
+                logMsg += ` (Hardskin -${reduce} DMG!)`;
             }
 
-            // 4. APPLY FINAL DAMAGE
-            if (baseDmg > 0) defender.hp = Math.max(0, defender.hp - baseDmg);
+            // 4. APPLY FINAL DAMAGE & CAHAYA LUCKY SKILL
+            if (baseDmg > 0) {
+                let finalDamage = baseDmg;
+                // Check if this damage kills P or if it's a roll 20 against Cahaya
+                if ((defender.hp - finalDamage <= 0 || roll === 20) && defender.id === 'cahaya') {
+                    defender.hp = 1;
+                    gameState.extraDice[defenderIdx] = true;
+                    logMsg += ` [LUCKY! ${defender.name} bertahan di 1 HP!]`;
+                } else {
+                    defender.hp -= finalDamage;
+                }
+                
+                if (defender.hp < 0) defender.hp = 0;
+            }
             addLog(logMsg);
 
             // Tanah - Burrow trigger
@@ -509,16 +553,16 @@
         }
 
         // 5. END PHASE SKILLS
-        // Tumbuhan - Regrow
-        if (attacker.id === 'tumbuhan' && Math.ceil(attacker.hp) % 2 !== 0) {
-            let reg = Math.floor(roll / 2);
-            attacker.hp = Math.min(attacker.maxHp, attacker.hp + reg);
-            addLog(`Regrow! ${attacker.name} pulih ${reg} HP.`);
-        }
-        
-        // Petir - Shocks (End Phase Attacker & Defender)
-        [gameState.p1, gameState.p2].forEach(p => {
-            if (p.id === 'petir' && p.lastRoll > 0) {
+        // Regrow (Tumbuhan)
+        [gameState.p1, gameState.p2].forEach((p, idx) => {
+            if (p.id === 'tumbuhan' && Math.ceil(p.hp) % 2 !== 0 && p.hp > 0) {
+                let reg = Math.floor(roll / 2);
+                p.hp = Math.min(p.maxHp, p.hp + reg);
+                addLog(`Regrow! ${p.name} pulih ${reg} HP.`);
+            }
+            
+            // Shock (Petir) - End phase damage
+            if (p.id === 'petir' && p.lastRoll > 0 && p.hp > 0) {
                 let shockDmg = Math.floor(p.lastRoll / 4);
                 let target = (p === gameState.p1) ? gameState.p2 : gameState.p1;
                 target.hp = Math.max(0, target.hp - shockDmg);
