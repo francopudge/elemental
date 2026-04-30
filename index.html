@@ -350,13 +350,11 @@
         updateUI();
     } 
 
-    // Logika Perubahan Grist ke Plague (DIPERBAIKI: Menggunakan parameter prefix yang benar)
     function checkTransformation(entity, prefix) {
         if (entity.charType === 'grist' && entity.hp < 50 && !entity.transformed) {
             entity.transformed = true;
             entity.charType = 'plague'; 
             
-            // Logika penamaan ulang
             if (prefix === 'p') {
                 entity.name = "PLAGUE";
             } else {
@@ -376,10 +374,10 @@
         // P1 Skills
         if (player.charType === 'grist') {
             document.getElementById('skill-name').innerText = "Chlorophyll Armor";
-            document.getElementById('skill-desc').innerText = "Pulihkan 5 HP otomatis setiap giliran."; 
+            document.getElementById('skill-desc').innerText = "Pulihkan 5 HP otomatis setiap giliran grist."; 
         } else if (player.charType === 'plague') {
             document.getElementById('skill-name').innerText = "Aura of Decay";
-            document.getElementById('skill-desc').innerText = "Serap 5 HP lawan jika angka dadu ganjil.";
+            document.getElementById('skill-desc').innerText = "Serap 5 HP jika lawan melempar dadu ganjil.";
         } else if (player.charType === 'progenitus') { 
             document.getElementById('skill-name').innerText = "The Great Aegis";
             document.getElementById('skill-desc').innerText = "Pertahanan absolut sang dewa."; 
@@ -395,7 +393,7 @@
             document.getElementById('enemy-skill-desc').innerText = "Pulihkan 5 HP otomatis setiap giliran."; 
         } else if (enemy.charType === 'plague') {
             document.getElementById('enemy-skill-name').innerText = "Aura of Decay";
-            document.getElementById('enemy-skill-desc').innerText = "Serap 5 HP lawan jika angka dadu ganjil.";
+            document.getElementById('enemy-skill-desc').innerText = "Serap 5 HP jika lawan melempar dadu ganjil.";
         } else if (enemy.charType === 'progenitus') { 
             document.getElementById('enemy-skill-name').innerText = "The Great Aegis";
             document.getElementById('enemy-skill-desc').innerText = "Pertahanan absolut sang dewa."; 
@@ -403,7 +401,6 @@
     }
 
     function updateUI() {
-        // Cek transformasi SEBELUM update teks/visual (agar perubahan instan)
         checkTransformation(player, 'p');
         checkTransformation(enemy, 'e');
 
@@ -422,20 +419,23 @@
         if (gameMode === 'multiplayer' && activePlayer !== 1) return;
         document.getElementById('btn-attack').disabled = true; 
         
+        // --- HEAL DI AWAL GILIRAN P1 (GRIST) ---
+        if (player.charType === 'grist') {
+            player.hp = Math.min(player.hp + 5, player.maxHp);
+            addLog(`Chlorophyll Armor: ${player.name} pulih 5 HP!`);
+            updateUI();
+            await new Promise(r => setTimeout(r, 600)); 
+        }
+
         let initialDamage = Math.floor(Math.random() * 20) + 1; 
         addLog(`${player.name} Roll: <b>${initialDamage}</b>`);
 
-        // Cek Aura of Decay P1 (Sesudah Roll D20)
-        if (player.charType === 'plague' && initialDamage % 2 !== 0) {
-            enemy.hp = Math.max(0, enemy.hp - 5);
-            player.hp = Math.min(player.hp + 5, player.maxHp); 
-            addLog(`Aura of Decay menyerap HP!`);
+        if (enemy.charType === 'plague' && initialDamage % 2 !== 0) {
+            player.hp = Math.max(0, player.hp - 5);
+            enemy.hp = Math.min(enemy.hp + 5, enemy.maxHp); 
+            addLog(`Aura of Decay milik ${enemy.name} aktif karena roll ganjil!`);
         }
-        
-        // Cek Chlorophyll Armor P1
-        if (player.charType === 'grist') player.hp = Math.min(player.hp + 5, player.maxHp);
 
-        // Kalkulasi Damage D20
         let finalDamage = initialDamage;
         if (enemy.charType === 'progenitus') {
             finalDamage = Math.max(0, initialDamage - 5);
@@ -461,20 +461,23 @@
     async function mulaiGiliranP2() {
         document.getElementById('btn-attack-p2').disabled = true;
 
+        // --- HEAL DI AWAL GILIRAN P2 (GRIST) ---
+        if (enemy.charType === 'grist') {
+            enemy.hp = Math.min(enemy.hp + 5, enemy.maxHp);
+            addLog(`Chlorophyll Armor: ${enemy.name} pulih 5 HP!`);
+            updateUI();
+            await new Promise(r => setTimeout(r, 600));
+        }
+
         let initialDamage = Math.floor(Math.random() * 20) + 1;
         addLog(`${enemy.name} Roll: <b>${initialDamage}</b>`); 
 
-        // Cek Aura of Decay P2 (Sesudah Roll D20)
-        if (enemy.charType === 'plague' && initialDamage % 2 !== 0) {
-            player.hp = Math.max(0, player.hp - 5);
-            enemy.hp = Math.min(enemy.hp + 5, enemy.maxHp); 
-            addLog(`Aura of Decay menyerap HP!`);
+        if (player.charType === 'plague' && initialDamage % 2 !== 0) {
+            enemy.hp = Math.max(0, enemy.hp - 5);
+            player.hp = Math.min(player.hp + 5, player.maxHp); 
+            addLog(`Aura of Decay milik ${player.name} aktif karena roll ganjil!`);
         }
 
-        // Cek Chlorophyll Armor P2
-        if (enemy.charType === 'grist') enemy.hp = Math.min(enemy.hp + 5, enemy.maxHp);
-
-        // Kalkulasi Damage D20
         let finalDamage = initialDamage;
         if (player.charType === 'progenitus') {
             finalDamage = Math.max(0, initialDamage - 5);
@@ -493,20 +496,23 @@
     } 
 
     async function mulaiGiliranAI() {
+        // --- HEAL DI AWAL GILIRAN AI (GRIST) ---
+        if (enemy.charType === 'grist') {
+            enemy.hp = Math.min(enemy.hp + 5, enemy.maxHp);
+            addLog(`Chlorophyll Armor: ${enemy.name} pulih 5 HP!`);
+            updateUI();
+            await new Promise(r => setTimeout(r, 600));
+        }
+
         let initialDamage = Math.floor(Math.random() * 20) + 1;
         addLog(`AI Roll: <b>${initialDamage}</b>`);
 
-        // Cek Aura of Decay AI (Sesudah Roll D20)
-        if (enemy.charType === 'plague' && initialDamage % 2 !== 0) {
-            player.hp = Math.max(0, player.hp - 5);
-            enemy.hp = Math.min(enemy.hp + 5, enemy.maxHp); 
-            addLog(`Aura of Decay menyerap HP!`);
+        if (player.charType === 'plague' && initialDamage % 2 !== 0) {
+            enemy.hp = Math.max(0, enemy.hp - 5);
+            player.hp = Math.min(player.hp + 5, player.maxHp); 
+            addLog(`Aura of Decay milik ${player.name} aktif karena roll ganjil!`);
         }
 
-        // Cek Chlorophyll Armor AI
-        if (enemy.charType === 'grist') enemy.hp = Math.min(enemy.hp + 5, enemy.maxHp);
-
-        // Kalkulasi Damage D20
         let finalDamage = initialDamage;
         if (player.charType === 'progenitus') {
             finalDamage = Math.max(0, initialDamage - 5);
